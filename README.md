@@ -16,6 +16,7 @@
 - **[SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads):** Сервер для размещения SQL-базы данных.
 - **[SQL Server Management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16):** Графический интерфейс для управления и взаимодействия с базами данных.
 - **[DrawIO](https://www.drawio.com/):** Архитектура данных проектирования, модели, потоки и диаграммы.
+- **[Dataset](https://www.kaggle.com/datasets/enzoschitini/brazilian-e-commerce-public-dataset-by-olist):** Поскольку используемый dataset слишком большой, чтобы внести его в директорию оригинальным файлом, добавил отдельную ссылку на Kaggle.
 
 ## 📢 Требования к проекту
 
