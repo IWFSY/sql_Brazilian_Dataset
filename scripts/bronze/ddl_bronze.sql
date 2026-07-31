@@ -8,8 +8,8 @@ DDL-скрипт: Создание бронзовой таблицы
 	Запуск этого скрипта переопределит структуру DDL «бронзовой» таблицы
 ===========================================================================================================
 */
-IF OBJECT_ID ('bronze.brazil.dataset', 'U') IS NOT NULL
-	DROP TABLE bronze.brazil.dataset; 
-CREATE TABLE bronze.brazil.dataset (
+IF OBJECT_ID ('bronze.brazil_dataset', 'U') IS NOT NULL
+	DROP TABLE bronze.brazil_dataset; 
+CREATE TABLE bronze.brazil_dataset (
 	overall NVARCHAR(MAX)
-	);
+);
