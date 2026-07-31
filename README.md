@@ -1,4 +1,4 @@
-## 🔓 Добро пожаловать в репозиторий sql_data_warhouse_project_amazon, проектирование аналитического DWH на базе Amazon Sales Dataset.   
+## 🔓 Добро пожаловать в репозиторий sql_Brazilian_Dataset, проектирование аналитического DWH на базе Brazilian E-Commerce Public Dataset by Olist.   
 Это проект для портфолио, его суть в демонстрации навыков создания хранилищ данных и получения из них аналитических метрик для бизнеса. 
 
 ## 🏅 Архитектура проекта:
@@ -51,4 +51,4 @@
 
 >**Идейный вдохновитель и методология:** Проект спроектирован с опорой на архитектурные паттерны и обучающие материалы инженера данных **Baraa Khatib** (курс *Data with Baraa* [![YouTube](https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white)](http://bit.ly/3GiCVUE)). Выражаю благодарность автору за вклад в популяризацию подходов к проектированию DWH. 
 
->**Исходные данные:** Благодарность автору датасета `amazon-sales-dataset` на платформе Kaggle.
+>**Исходные данные:** Благодарность автору датасета `Brazilian E-Commerce Public Dataset by Olist` на платформе Kaggle.
