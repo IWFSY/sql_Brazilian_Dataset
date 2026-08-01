@@ -37,6 +37,8 @@ BEGIN
 		FROM 'E:\Senna010594\Brazilian E-Commerce Public Dataset by Olist.csv'
 		WITH (
 			FIRSTROW = 2,
+			FORMAT = 'CSV',
+			FIELDQUOTE = '"', -- Анализ данных показал, что в трех строках 'seller_state' проставлены запятые внутри одной колонки, но колонка обособлена кавычками. Поэтому этот шаг крайне важен, чтобы избежать смещения строк.
 			FIELDTERMINATOR = ',',
 			TABLOCK
 		);
