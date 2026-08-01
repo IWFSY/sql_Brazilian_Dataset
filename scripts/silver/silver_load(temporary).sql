@@ -23,7 +23,7 @@ BEGIN
 	SET DATEFORMAT ymd  -- Решаем проблему с DATETIME. Для RU региона TIME часть возвращает ошибку в этих данных
 	SET NOCOUNT ON  --  Избавляемся от лишних сообщений. Все, что нужно, уже передано через PRINT
 
-	DECLARE @start_time DATETIME , @end_time DATETIME, @batch_start_time DATETIME, @batch_end_time DATETIME, @rows_fact INT, @rows_cust INT, @rows_prod INT, @rows_sell INT;
+	DECLARE @start_time DATETIME, @end_time DATETIME, @batch_start_time DATETIME, @batch_end_time DATETIME, @rows_fact INT, @rows_cust INT, @rows_prod INT, @rows_sell INT;
 	BEGIN TRY
 		SET @batch_start_time = GETDATE();
 		PRINT '=========================================================';
@@ -61,7 +61,7 @@ BEGIN
 
 -- =====================================================================================================================================
 
-				SET @start_time = GETDATE();
+		SET @start_time = GETDATE();
 		PRINT '>> Очистка данных из таблицы: silver.brazil_db_dim_cust';
 		TRUNCATE TABLE silver.brazil_db_dim_cust;
 
@@ -83,7 +83,7 @@ BEGIN
 
 -- =====================================================================================================================================
 
-				SET @start_time = GETDATE();
+		SET @start_time = GETDATE();
 		PRINT '>> Очистка данных из таблицы: silver.brazil_db_dim_prod';
 		TRUNCATE TABLE silver.brazil_db_dim_prod;
 
@@ -92,9 +92,9 @@ BEGIN
 		SELECT 
 			product_id,
 			product_category_name,
-			CAST(CAST(product_name_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы
-			CAST(CAST(product_description_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы
-			CAST(CAST(product_photos_qty AS DECIMAL(10,0)) AS INT) product_photos_qty,
+			CAST(CAST(product_name_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
+			CAST(CAST(product_description_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
+			CAST(CAST(product_photos_qty AS DECIMAL(10,0)) AS INT) product_photos_qty,  --  Преобразуем в INT, чтобы отсечь лишние дроби
 			product_weight_g,
 			product_length_cm,
 			product_height_cm,
@@ -109,7 +109,7 @@ BEGIN
 
 -- =====================================================================================================================================
 
-				SET @start_time = GETDATE();
+		SET @start_time = GETDATE();
 		PRINT '>> Очистка данных из таблицы: silver.brazil_db_dim_sell';
 		TRUNCATE TABLE silver.brazil_db_dim_sell;
 
