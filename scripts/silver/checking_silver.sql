@@ -107,3 +107,40 @@ SELECT DISTINCT product_category_name FROM bronze.brazil_dataset WHERE LEN(TRIM(
 
 SELECT DISTINCT order_status FROM bronze.brazil_dataset WHERE LEN(TRIM(order_status)) != LEN(order_status)
 
+-- Проверка аномалий в габаритах 
+SELECT 
+	MIN(product_name_length) namep,
+	MAX(product_name_length),
+	MIN(product_description_length) descr,
+	MAX(product_description_length),
+	MIN(product_photos_qty) photo,
+	MAX(product_photos_qty),
+	MIN(product_weight_g),
+	MAX(product_weight_g),
+	MIN(product_length_cm),
+	MAX(product_length_cm),
+	MIN(product_height_cm),
+	MAX(product_height_cm),
+	MIN(product_width_cm),
+	MAX(product_width_cm)
+FROM silver.brazil_db_dim_prod
+-- Найден продукт с весом 0.0. Судя по проверке категории и остальных габаритов это постельное белье, которое никак не можетв есить 0.0, на этапе инверт сделаю его нулификацию. В Gold представлении заменю на n\a.
+SELECT 
+	product_id,
+	product_category_name,
+	product_weight_g,
+	product_length_cm,
+	product_height_cm,
+	product_width_cm
+FROM bronze.brazil_dataset
+GROUP BY 
+	product_id,
+	product_category_name,
+	product_weight_g,
+	product_length_cm,
+	product_height_cm,
+	product_width_cm
+HAVING MIN(CAST(product_weight_g AS DECIMAL(10,2))) = 0.0
+
+
+
