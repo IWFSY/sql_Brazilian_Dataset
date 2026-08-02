@@ -27,6 +27,43 @@ BEGIN
 	BEGIN TRY
 		SET @batch_start_time = GETDATE();
 		PRINT '=========================================================';
+		PRINT 'Загрузка данных для геолокации клиентов';
+		PRINT '=========================================================';
+
+		SET @start_time = GETDATE();
+		PRINT '>> Очистка данных из таблицы: silver.brazil_db_geo';
+		TRUNCATE TABLE silver.brazil_db_geo;
+		PRINT '>> Вставка информации о данных: silver.brazil_db_geo';
+				WITH cte_rn_geo AS (
+		SELECT
+			customer_zip_code_prefix,
+			customer_city,
+			customer_state,
+			ROW_NUMBER() OVER (PARTITION BY customer_zip_code_prefix ORDER BY COUNT(*)) AS rn_geo
+		FROM bronze.brazil_dataset
+		GROUP BY 	
+			customer_zip_code_prefix,
+			customer_city,
+			customer_state
+		)
+		INSERT INTO silver.brazil_db_geo (customer_zip_code_prefix,customer_city,customer_state)
+
+		SELECT
+			customer_zip_code_prefix,
+			customer_city,
+			customer_state
+		FROM cte_rn_geo 
+		WHERE rn_geo = 1
+
+		SET @rows_fact = @@ROWCOUNT;
+		SET @end_time = GETDATE();
+		PRINT '>> Длительность загрузки: ' +  CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + 'секунд';
+		PRINT '>> Загружено строк: ' + CAST(@rows_fact AS VARCHAR(10));
+		PRINT '-------------------------------';
+-- Как показала проверка, конкретно в этом датасете аномалий в географии нет. Но в целом сделал выделение географии на этом уровне, чтобы гарантированно иметь корретную информацию. 
+-- =====================================================================================================================================
+
+		PRINT '=========================================================';
 		PRINT 'Загрузка серебренного слоя';
 		PRINT '=========================================================';
 
@@ -68,12 +105,13 @@ BEGIN
 		PRINT '>> Вставка информации о данных: silver.brazil_db_dim_cust';
 		INSERT INTO silver.brazil_db_dim_cust (customer_id,customer_unique_id,customer_zip_code_prefix,customer_city,customer_state)
 		SELECT 
-			customer_id,
-			customer_unique_id,
-			customer_zip_code_prefix,
-			customer_city,
-			customer_state
-		FROM bronze.brazil_dataset
+			c.customer_id,
+			c.customer_unique_id,
+			g.customer_zip_code_prefix,
+			g.customer_city,
+			g.customer_state
+		FROM bronze.brazil_dataset c
+		JOIN silver.brazil_db_geo g ON g.customer_zip_code_prefix = c.customer_zip_code_prefix
 		SET @rows_cust = @@ROWCOUNT;
 
 		SET @end_time = GETDATE();
@@ -116,11 +154,12 @@ BEGIN
 		PRINT '>> Вставка информации о данных: silver.brazil_db_dim_sell';
 		INSERT INTO silver.brazil_db_dim_sell (seller_id,seller_city,seller_state,seller_zip_code_prefix)
 		SELECT 
-			seller_id,
-			seller_city,
-			seller_state,
-			seller_zip_code_prefix
-		FROM bronze.brazil_dataset
+			s.seller_id,
+			g.customer_city AS seller_city,
+			g.customer_state AS seller_state,
+			g.customer_zip_code_prefix AS seller_zip_code_prefix
+		FROM bronze.brazil_dataset s
+		JOIN silver.brazil_db_geo g ON g.customer_zip_code_prefix = s.customer_zip_code_prefix
 		SET @rows_sell = @@ROWCOUNT;
 
 		SET @end_time = GETDATE();
