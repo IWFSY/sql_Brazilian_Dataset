@@ -54,10 +54,10 @@ CREATE TABLE silver.brazil_db_dim_prod (
 	product_name_length INT,
 	product_description_length INT,
 	product_photos_qty INT,
-	product_weight_g DECIMAL(10,2),
-	product_length_cm DECIMAL(10,2),
-	product_height_cm DECIMAL(10,2),
-	product_width_cm DECIMAL(10,2)
+	product_weight_g DECIMAL(10,1),
+	product_length_cm DECIMAL(10,1),
+	product_height_cm DECIMAL(10,1),
+	product_width_cm DECIMAL(10,1)
 );
 
 IF OBJECT_ID ('silver.brazil_db_geo', 'U') IS NOT NULL
