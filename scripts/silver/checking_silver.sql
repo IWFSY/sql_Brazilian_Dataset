@@ -1,6 +1,6 @@
--- ====================
--- Сверка типов данных
--- ====================
+-- =======================================================================
+-- Первичная сверка типов данных. Проверки до создания скелета silver_load
+-- =======================================================================
 
 -- Проверка и вычисление сместившихся строк
 SELECT DISTINCT
@@ -34,7 +34,6 @@ WHERE LEN(seller_zip_code_prefix) > 5
 -- В результате этой сверки были найдены три смещения строк и внесены корерктировки в процедуру загрузки бронзового слоя
 -- =====================================================================================================================
 
-
 -- Дополнительная проверка на ошибки с DATETIME. Пробуем преобразовать в дэйттайм и выдаем значения, которые преобразовать не удалось. Наглядная демонстрация работы "SET DATEFORMAT ymd"
 
 --SET DATEFORMAT ymd
@@ -54,4 +53,57 @@ WHERE
     OR TRY_CAST(order_delivered_carrier_date AS datetime) IS NULL AND order_delivered_carrier_date IS NOT NULL
     OR TRY_CAST(order_delivered_customer_date AS datetime) IS NULL AND order_delivered_customer_date IS NOT NULL
     OR TRY_CAST(order_estimated_delivery_date AS datetime) IS NULL AND order_estimated_delivery_date IS NOT NULL;
+
+-- ==============================================================================
+-- Проверка на несовпадения названий городов после выделения таблицы с географией
+-- ==============================================================================
+
+    SELECT
+	br.customer_zip_code_prefix BRC,
+	br.customer_city BRC,
+	br.customer_state BRC,
+	c.customer_zip_code_prefix C,
+	c.customer_city C,
+	c.customer_state C
+FROM bronze.brazil_dataset br
+JOIN silver.brazil_db_dim_cust c ON br.customer_id = c.customer_id
+WHERE br.customer_city != c.customer_city 
+
+	SELECT
+	br.seller_zip_code_prefix BRS,
+	br.seller_city BRS,
+	br.seller_state BRS,
+	s.seller_zip_code_prefix S,
+	s.seller_city S,
+	s.seller_state S
+FROM bronze.brazil_dataset br
+JOIN silver.brazil_db_dim_sell s ON br.seller_id = s.seller_id
+WHERE br.seller_city != s.seller_city
+
+-- =========================================================
+-- Непосредственная работа с очисткой данных для silver_load
+-- =========================================================
+
+-- Проверка на лишние пробелы и уникальные значения
+SELECT DISTINCT
+	customer_city,
+	customer_state,
+	customer_zip_code_prefix,
+	seller_city,
+	seller_state,
+	seller_zip_code_prefix
+FROM bronze.brazil_dataset
+WHERE	LEN(TRIM(customer_city)) != LEN(customer_city) OR
+	LEN(TRIM(customer_state)) != LEN(customer_state) OR
+	LEN(TRIM(customer_zip_code_prefix)) != LEN(customer_zip_code_prefix) OR
+	LEN(TRIM(product_category_name)) != LEN(product_category_name) OR
+	LEN(TRIM(seller_city)) != LEN(seller_city) OR
+	LEN(TRIM(seller_state)) != LEN(seller_state) OR
+	LEN(TRIM(seller_zip_code_prefix)) != LEN(seller_zip_code_prefix)
+
+SELECT DISTINCT payment_type FROM bronze.brazil_dataset WHERE LEN(TRIM(payment_type)) != LEN(payment_type)
+
+SELECT DISTINCT product_category_name FROM bronze.brazil_dataset WHERE LEN(TRIM(product_category_name)) != LEN(product_category_name)
+
+SELECT DISTINCT order_status FROM bronze.brazil_dataset WHERE LEN(TRIM(order_status)) != LEN(order_status)
 
