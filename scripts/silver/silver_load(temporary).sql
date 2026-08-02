@@ -130,10 +130,11 @@ BEGIN
 		SELECT 
 			product_id,
 			product_category_name,
-			CAST(CAST(product_name_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
+			CAST(CAST(product_name_lenght AS DECIMAL(10,0)) AS INT) AS product_name_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
 			CAST(CAST(product_description_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
 			CAST(CAST(product_photos_qty AS DECIMAL(10,0)) AS INT) product_photos_qty,  --  Преобразуем в INT, чтобы отсечь лишние дроби
-			product_weight_g,
+			CASE WHEN product_weight_g = '0.0' THEN NULL ELSE product_weight_g 
+			END AS product_weight_g,
 			product_length_cm,
 			product_height_cm,
 			product_width_cm
