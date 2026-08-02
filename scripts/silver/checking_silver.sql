@@ -142,5 +142,22 @@ GROUP BY
 	product_width_cm
 HAVING MIN(CAST(product_weight_g AS DECIMAL(10,2))) = 0.0
 
+-- Найдены аномалии в хронолической последвоательности дат
+SELECT
+	order_id,
+	order_purchase_timestamp AS make_an_order1,
+	order_approved_at AS pay_to_seller2,
+	order_delivered_carrier_date AS deliver_to_carrier3,
+	shipping_limit_date AS shipping_limit_date3,
+	order_delivered_customer_date AS delivery_to_customer4,
+	order_estimated_delivery_date AS planned_date_delivered_to_customer4
+FROM bronze.brazil_dataset
+WHERE 
+	order_purchase_timestamp > order_approved_at OR
+	order_purchase_timestamp > order_delivered_carrier_date OR
+	order_purchase_timestamp > shipping_limit_date OR
+	order_purchase_timestamp > order_delivered_customer_date OR
+	order_purchase_timestamp > order_estimated_delivery_date
+
 
 
