@@ -17,9 +17,9 @@ CREATE TABLE silver.brazil_db_fact (
 	payment_type VARCHAR(15),
 	payment_sequential INT,
 	payment_installments INT,
-	price DECIMAL(5,2),
-	freight_value DECIMAL(5,2),
-	payment_value DECIMAL(5,2),
+	price DECIMAL(10,2),
+	freight_value DECIMAL(10,2),
+	payment_value DECIMAL(10,2),
 	order_status VARCHAR(15),
 	shipping_limit_date DATETIME,
 	order_purchase_timestamp DATETIME NOT NULL,
@@ -58,4 +58,12 @@ CREATE TABLE silver.brazil_db_dim_prod (
 	product_length_cm DECIMAL(10,2),
 	product_height_cm DECIMAL(10,2),
 	product_width_cm DECIMAL(10,2)
+);
+
+IF OBJECT_ID ('silver.brazil_db_geo', 'U') IS NOT NULL
+	DROP TABLE silver.brazil_db_geo; 
+CREATE TABLE silver.brazil_db_geo (
+	customer_zip_code_prefix INT,
+	customer_city VARCHAR(50),
+	customer_state CHAR(2)
 );
