@@ -83,12 +83,19 @@ BEGIN
 			payment_value,
 			order_status,
 			shipping_limit_date,
-			order_purchase_timestamp,
-			order_approved_at,
-			order_delivered_carrier_date,
-			order_delivered_customer_date,
+			d1.make_an_order1 AS order_purchase_timestamp,
+			d2.pay_to_seller2 AS order_approved_at,
+			d3.deliver_to_carrier3 AS order_delivered_carrier_date,
+			d4.delivery_to_customer4 AS order_delivered_customer_date,
 			order_estimated_delivery_date
-		FROM bronze.brazil_dataset
+		FROM bronze.brazil_dataset br
+-- В результате проверки логики дат в них были найдены хронологические аномалии. Для решения в рамках этой ДБ я сделал проверку на сопоставление последовательности. 
+-- В частности, дата оформления заказа не может быть позже любой другой даты, дата оплаты не может быть позднее даты доставки, дата передачи в СД не может быть раньше даты доставки до клиента.
+-- В рамках реального проекта, конечно, такие вещи сверяются с ответственными за внесение этих данных и логику СУБД, но тут, для наглядности, я сделал простое приведение дат к правильной последовательности.
+		CROSS APPLY (SELECT br.order_purchase_timestamp AS make_an_order1) AS d1
+		CROSS APPLY (SELECT MAX(v) AS pay_to_seller2 FROM (VALUES (br.order_approved_at), (d1.make_an_order1)) AS val(v)) AS d2
+		CROSS APPLY (SELECT MAX(v) AS deliver_to_carrier3 FROM (VALUES(br.order_delivered_carrier_date), (d2.pay_to_seller2)) AS val(v)) AS d3
+		CROSS APPLY (SELECT MAX(v) AS delivery_to_customer4 FROM (VALUES(br.order_delivered_customer_date), (d3.deliver_to_carrier3)) AS val(v)) AS d4
 
 		SET @rows_fact = @@ROWCOUNT;
 		SET @end_time = GETDATE();
