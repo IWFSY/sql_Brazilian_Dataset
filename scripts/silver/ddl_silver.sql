@@ -60,10 +60,18 @@ CREATE TABLE silver.brazil_db_dim_prod (
 	product_width_cm DECIMAL(10,1)
 );
 
-IF OBJECT_ID ('silver.brazil_db_geo', 'U') IS NOT NULL
-	DROP TABLE silver.brazil_db_geo; 
-CREATE TABLE silver.brazil_db_geo (
+IF OBJECT_ID ('silver.brazil_db_geo_cust', 'U') IS NOT NULL
+	DROP TABLE silver.brazil_db_geo_cust; 
+CREATE TABLE silver.brazil_db_geo_cust (
 	customer_zip_code_prefix INT,
 	customer_city VARCHAR(50),
 	customer_state CHAR(2)
+);
+
+IF OBJECT_ID ('silver.brazil_db_geo_sell', 'U') IS NOT NULL
+	DROP TABLE silver.brazil_db_geo_sell; 
+CREATE TABLE silver.brazil_db_geo_sell (
+	seller_zip_code_prefix INT,
+	seller_city VARCHAR(50),
+	seller_state CHAR(2)
 );
