@@ -26,7 +26,8 @@ CREATE TABLE silver.brazil_db_fact (
 	order_approved_at DATETIME,
 	order_delivered_carrier_date DATETIME,
 	order_delivered_customer_date DATETIME,
-	order_estimated_delivery_date DATE
+	order_estimated_delivery_date DATE,
+	db_create_date DATETIME2 DEFAULT GETDATE()
 );
 IF OBJECT_ID ('silver.brazil_db_dim_cust', 'U') IS NOT NULL
 	DROP TABLE silver.brazil_db_dim_cust; 
@@ -35,7 +36,8 @@ CREATE TABLE silver.brazil_db_dim_cust (
 	customer_unique_id VARCHAR(32) NOT NULL,
 	customer_zip_code_prefix INT,
 	customer_city VARCHAR(50),
-	customer_state CHAR(2)
+	customer_state CHAR(2),
+	db_create_date DATETIME2 DEFAULT GETDATE()
 );
 IF OBJECT_ID ('silver.brazil_db_dim_sell', 'U') IS NOT NULL
 	DROP TABLE silver.brazil_db_dim_sell; 
@@ -43,7 +45,8 @@ CREATE TABLE silver.brazil_db_dim_sell (
 	seller_id VARCHAR(32) NOT NULL,
 	seller_city VARCHAR(50),
 	seller_state CHAR(2),
-	seller_zip_code_prefix INT
+	seller_zip_code_prefix INT,
+	db_create_date DATETIME2 DEFAULT GETDATE()
 );
 
 IF OBJECT_ID ('silver.brazil_db_dim_prod', 'U') IS NOT NULL
@@ -57,7 +60,8 @@ CREATE TABLE silver.brazil_db_dim_prod (
 	product_weight_g DECIMAL(10,1),
 	product_length_cm DECIMAL(10,1),
 	product_height_cm DECIMAL(10,1),
-	product_width_cm DECIMAL(10,1)
+	product_width_cm DECIMAL(10,1),
+	db_create_date DATETIME2 DEFAULT GETDATE()
 );
 
 IF OBJECT_ID ('silver.brazil_db_geo_cust', 'U') IS NOT NULL
