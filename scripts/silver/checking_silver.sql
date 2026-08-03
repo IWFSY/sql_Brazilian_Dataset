@@ -159,5 +159,52 @@ WHERE
 	order_purchase_timestamp > order_delivered_customer_date OR
 	order_purchase_timestamp > order_estimated_delivery_date
 
+-- Самая трудозатратная часть серебряного слоя - проверка на анномалии в расчетах сумм. Суть запроса в проверке на соответствие сумм доставки и самой стоимости товара, с учетом секвенции платежей, сумме payment_value.
+-- В результате проверки было найдено 312 аномалий, которые частично связаны с допусками из-за дробей. В рамках этого проекта я разрешил допуск на 0.05.
+-- Опять же, в реальном проекте, ответственным лицам был бы передан весь список несостыковок, чтобы в дальнейшем решить насколько они критичны бизнесу и найти решение. В рамках моего проекта я просто зафиксивал их тут.
+
+WITH suma_deli_price AS (
+SELECT DISTINCT
+order_id,
+order_item_id,
+price,
+freight_value,
+price + freight_value AS suma_deli_price
+FROM [silver].[brazil_db_fact]
+GROUP BY order_id, order_item_id,price + freight_value,freight_value,price
+)
+-- Первый СТЕ группирует по ордер айди сумму стоимости товара и доставки. Также, поскольку почти все следующие СТЕ идут реляцией от него, я внес и все важные строки для будущего.
+, 
+overall_sum_deliprice AS (
+SELECT
+order_id,
+SUM(suma_deli_price) AS overall
+FROM suma_deli_price
+GROUP BY order_id
+)
+-- После того, как в прошлом СТЕ вы взяли отдельно суммы доставки и стоимости теперь их нужно сумировать полностью и сгруппировать по ордер айди. 
+,
+groupped_payment_value AS(
+SELECT
+order_id,
+SUM(payment_value) suma_payment_value
+FROM(
+SELECT DISTINCT  -- Отсев дубликав, оставляем только уники.
+order_id,
+payment_sequential,
+payment_value
+FROM [silver].[brazil_db_fact]
+)q
+GROUP BY order_id
+)
+-- Тут мы складываем уникальыне платежи в рамках заказов, чтобы в следующем этапе верно сопоставлять две суммы между собой.
+SELECT DISTINCT
+	d.order_id,
+	d.overall,
+	suma_payment_value
+FROM overall_sum_deliprice d
+JOIN groupped_payment_value g ON d.order_id = g.order_id
+WHERE ABS(suma_payment_value - overall) > 0.05
+-- Собираем все в один запрос, для сопоставления значений и допуска в 0.05. Конечно, при необходимости допуск можно вовсе убрать. 
 
 
