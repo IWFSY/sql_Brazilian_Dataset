@@ -34,10 +34,10 @@ BEGIN
 		PRINT '>> Очистка данных из таблицы: silver.brazil_db_geo';
 		TRUNCATE TABLE silver.brazil_db_geo;
 		PRINT '>> Вставка информации о данных: silver.brazil_db_geo';
-				WITH cte_rn_geo AS (
+				WITH cte_rn_geo_cust AS (
 		SELECT
 			customer_zip_code_prefix,
-			customer_city,
+			CONCAT(UPPER(LEFT(customer_city, 1)), LOWER(SUBSTRING(customer_city, 2, LEN(customer_city)))) AS customer_city,
 			customer_state,
 			ROW_NUMBER() OVER (PARTITION BY customer_zip_code_prefix ORDER BY COUNT(*)) AS rn_geo
 		FROM bronze.brazil_dataset
@@ -46,14 +46,36 @@ BEGIN
 			customer_city,
 			customer_state
 		)
-		INSERT INTO silver.brazil_db_geo (customer_zip_code_prefix,customer_city,customer_state)
+
+		INSERT INTO silver.brazil_db_geo_cust (customer_zip_code_prefix,customer_city,customer_state)
 
 		SELECT
 			customer_zip_code_prefix,
 			customer_city,
 			customer_state
-		FROM cte_rn_geo 
-		WHERE rn_geo = 1
+		FROM cte_rn_geo_cust 
+		WHERE rn_geo = 1;
+
+		WITH cte_rn_geo_sell AS (
+		SELECT
+			seller_zip_code_prefix,
+			CONCAT(UPPER(LEFT(seller_city, 1)), LOWER(SUBSTRING(seller_city, 2, LEN(seller_city)))) AS seller_city,
+			seller_state,
+			ROW_NUMBER() OVER (PARTITION BY seller_zip_code_prefix ORDER BY COUNT(*)) AS rn_geo
+		FROM bronze.brazil_dataset
+		GROUP BY 	
+			seller_zip_code_prefix,
+			seller_city,
+			seller_state
+		)
+
+		INSERT INTO silver.brazil_db_geo_sell (seller_zip_code_prefix,seller_city,seller_state)
+		SELECT
+			seller_zip_code_prefix,
+			seller_city,
+			seller_state
+		FROM cte_rn_geo_sell
+		WHERE rn_geo = 1;
 
 		SET @rows_fact = @@ROWCOUNT;
 		SET @end_time = GETDATE();
@@ -75,13 +97,13 @@ BEGIN
 		SELECT 
 			order_id,
 			order_item_id,
-			payment_type,
+			REPLACE(CONCAT(UPPER(LEFT(payment_type, 1)), LOWER(SUBSTRING(payment_type, 2, LEN(payment_type)))), '_', ' ') AS payment_type,
 			payment_sequential,
 			payment_installments,
 			price,
 			freight_value,
 			payment_value,
-			order_status,
+			CONCAT(UPPER(LEFT(order_status, 1)), LOWER(SUBSTRING(order_status, 2, LEN(order_status)))) AS order_status,
 			shipping_limit_date,
 			d1.make_an_order1 AS order_purchase_timestamp,
 			d2.pay_to_seller2 AS order_approved_at,
@@ -118,7 +140,7 @@ BEGIN
 			g.customer_city,
 			g.customer_state
 		FROM bronze.brazil_dataset c
-		JOIN silver.brazil_db_geo g ON g.customer_zip_code_prefix = c.customer_zip_code_prefix
+		JOIN silver.brazil_db_geo_cust g ON g.customer_zip_code_prefix = c.customer_zip_code_prefix
 		SET @rows_cust = @@ROWCOUNT;
 
 		SET @end_time = GETDATE();
@@ -136,7 +158,7 @@ BEGIN
 		INSERT INTO silver.brazil_db_dim_prod (product_id,product_category_name,product_name_length,product_description_length,product_photos_qty,product_weight_g,product_length_cm,product_height_cm,product_width_cm)
 		SELECT 
 			product_id,
-			product_category_name,
+			REPLACE(CONCAT(UPPER(LEFT(product_category_name, 1)), LOWER(SUBSTRING(product_category_name, 2, LEN(product_category_name)))), '_', ' ') AS product_category_name,
 			CAST(CAST(product_name_lenght AS DECIMAL(10,0)) AS INT) AS product_name_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
 			CAST(CAST(product_description_lenght AS DECIMAL(10,0)) AS INT) AS product_description_length,  --  Исправляем опечатки сырой базы и преобразуем в INT, чтобы отсечь лишние дроби
 			CAST(CAST(product_photos_qty AS DECIMAL(10,0)) AS INT) product_photos_qty,  --  Преобразуем в INT, чтобы отсечь лишние дроби
@@ -163,11 +185,11 @@ BEGIN
 		INSERT INTO silver.brazil_db_dim_sell (seller_id,seller_city,seller_state,seller_zip_code_prefix)
 		SELECT 
 			s.seller_id,
-			g.customer_city AS seller_city,
-			g.customer_state AS seller_state,
-			g.customer_zip_code_prefix AS seller_zip_code_prefix
+			g.seller_city,
+			g.seller_state,
+			g.seller_zip_code_prefix
 		FROM bronze.brazil_dataset s
-		JOIN silver.brazil_db_geo g ON g.customer_zip_code_prefix = s.customer_zip_code_prefix
+		JOIN silver.brazil_db_geo_sell g ON g.seller_zip_code_prefix = s.seller_zip_code_prefix
 		SET @rows_sell = @@ROWCOUNT;
 
 		SET @end_time = GETDATE();
@@ -191,3 +213,4 @@ BEGIN
 		PRINT '=====================================================';
 	END CATCH
 END
+
