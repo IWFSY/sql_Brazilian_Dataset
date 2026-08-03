@@ -12,6 +12,12 @@ DDL-скрипт: Создание серебряных таблиц
 IF OBJECT_ID ('silver.brazil_db_fact', 'U') IS NOT NULL
 	DROP TABLE silver.brazil_db_fact; 
 CREATE TABLE silver.brazil_db_fact (
+	customer_key INT,
+	product_key INT,
+	seller_key INT,
+    customer_id VARCHAR(32) NOT NULL,
+    product_id VARCHAR(32) NOT NULL,
+    seller_id VARCHAR(32) NOT NULL,
 	order_id VARCHAR(32) NOT NULL,
 	order_item_id INT NOT NULL,
 	payment_type VARCHAR(15),
@@ -32,6 +38,7 @@ CREATE TABLE silver.brazil_db_fact (
 IF OBJECT_ID ('silver.brazil_db_dim_cust', 'U') IS NOT NULL
 	DROP TABLE silver.brazil_db_dim_cust; 
 CREATE TABLE silver.brazil_db_dim_cust (
+	customer_key INT IDENTITY(1,1) PRIMARY KEY,
 	customer_id VARCHAR(32) NOT NULL,
 	customer_unique_id VARCHAR(32) NOT NULL,
 	customer_zip_code_prefix INT,
@@ -42,6 +49,7 @@ CREATE TABLE silver.brazil_db_dim_cust (
 IF OBJECT_ID ('silver.brazil_db_dim_sell', 'U') IS NOT NULL
 	DROP TABLE silver.brazil_db_dim_sell; 
 CREATE TABLE silver.brazil_db_dim_sell (
+	seller_key INT IDENTITY(1,1) PRIMARY KEY,
 	seller_id VARCHAR(32) NOT NULL,
 	seller_city VARCHAR(50),
 	seller_state CHAR(2),
@@ -52,6 +60,7 @@ CREATE TABLE silver.brazil_db_dim_sell (
 IF OBJECT_ID ('silver.brazil_db_dim_prod', 'U') IS NOT NULL
 	DROP TABLE silver.brazil_db_dim_prod; 
 CREATE TABLE silver.brazil_db_dim_prod (
+	product_key INT IDENTITY(1,1) PRIMARY KEY,
 	product_id VARCHAR(32) NOT NULL,
 	product_category_name VARCHAR(50),
 	product_name_length INT,
