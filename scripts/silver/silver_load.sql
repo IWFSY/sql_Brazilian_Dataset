@@ -32,7 +32,7 @@ BEGIN
 -- =====================================================================================================================================
 		SET @start_time = GETDATE();
 		PRINT '>> Очистка данных из таблицы: silver.brazil_db_geo_cust';
-		TRUNCATE TABLE silver.brazil_db_geo;
+		TRUNCATE TABLE silver.brazil_db_geo_cust;
 		PRINT '>> Вставка информации о данных: silver.brazil_db_geo_cust';
 
 		WITH cte_rn_geo_cust AS (
@@ -65,7 +65,7 @@ BEGIN
 -- =====================================================================================================================================
 		SET @start_time = GETDATE();
 		PRINT '>> Очистка данных из таблицы: silver.brazil_db_geo_sell';
-		TRUNCATE TABLE silver.brazil_db_geo;
+		TRUNCATE TABLE silver.brazil_db_geo_sell;
 		PRINT '>> Вставка информации о данных: silver.brazil_db_geo_sell';
 
 		WITH cte_rn_geo_sell AS (
