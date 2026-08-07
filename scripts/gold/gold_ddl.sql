@@ -145,7 +145,7 @@ FROM cte_sellecr_calc_2
 GO
 
 -- ============================================================================= 
--- Создание витрины клиентов: gold.logistics_mart
+-- Создание витрины клиентов: gold.customers_mart
 -- =============================================================================
 
 IF OBJECT_ID('gold.customers_mart', 'V') IS NOT NULL
@@ -159,6 +159,7 @@ SELECT
 	c.customer_unique_id,
 	order_id,
 	customer_city,
+	customer_state,
 	payment_type,
 	payment_sequential,
 	payment_installments,
@@ -197,6 +198,7 @@ SELECT
 	customer_unique_id,
 	order_id,
 	customer_city,
+	customer_state,
 	payment_sequential,
 	payment_installments,
 	price,
@@ -226,7 +228,7 @@ FROM cte_calc_gold_customers
 GO
 
 -- ============================================================================= 
--- Создание витрины клиентов: gold.logistics_mart
+-- Создание витрины клиентов: gold.products_mart
 -- =============================================================================
 
 IF OBJECT_ID('gold.products_mart', 'V') IS NOT NULL
@@ -258,7 +260,7 @@ FROM [silver].[brazil_db_fact] f
 LEFT JOIN [silver].[brazil_db_dim_prod] p ON f.product_key = p.product_key
 )
 
-SELECT TOP 10
+SELECT
 product_key,
 order_id,
 order_item_id,
