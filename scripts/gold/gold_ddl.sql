@@ -4,8 +4,9 @@ DDL Script: Создаем Gold представление
 =============================================================================== 
 Цель скрипта: 
   Этот скрипт создаёт просмотры для слоя Gold в хранилище данных. 
-  Золотой слой представляет готовые таблицы с витринами для бизнеса.
+  Золотой слой представляет готовые таблицы с витринами для бизнеса и таблицу для связи.
 Список витрин:
+  - Таблица для связи (gold.link_table),
   - Витрина логистики (gold.logistics_mart),
   - Витрина селлеров (gold.sellers_mart),
   - Витрина клиентов (gold.customers_mart),
@@ -19,6 +20,29 @@ DDL Script: Создаем Gold представление
 */ 
 
 -- ============================================================================= 
+-- Создание таблицы для связи: gold.link_table
+-- =============================================================================
+IF OBJECT_ID('gold.link_table', 'V') IS NOT NULL
+    DROP VIEW gold.link_table;
+GO
+CREATE VIEW gold.link_table AS
+SELECT 
+customer_key,
+seller_key,
+product_key,
+order_id,
+order_item_id AS item_sequence_number,
+payment_type AS payment_method ,
+payment_sequential AS payment_sequence,
+payment_installments,
+price AS item_price,
+freight_value AS item_shipping_cost,
+payment_value AS total_order_payment,
+order_status,
+order_purchase_timestamp AS order_datetime
+FROM silver.brazil_db_fact
+GO
+-- ============================================================================= 
 -- Создание витрины логистики: gold.logistics_mart
 -- =============================================================================
 IF OBJECT_ID('gold.logistics_mart', 'V') IS NOT NULL
@@ -29,8 +53,6 @@ SELECT
 	f.seller_key,
 	f.customer_key,
 	order_id,
-	s.seller_city,
-	c.customer_city,
 	order_purchase_timestamp AS order_datetime,
 	order_approved_at AS payment_datetime,
 	order_delivered_carrier_date AS shipping_date,
@@ -55,7 +77,6 @@ FROM [silver].[brazil_db_fact] f
 LEFT JOIN [silver].[brazil_db_dim_sell] s ON f.seller_key = s.seller_key
 LEFT JOIN [silver].[brazil_db_dim_cust] c ON f.customer_key = c.customer_key
 GO
-	
 -- ============================================================================= 
 -- Создание витрины селлеров: gold.sellers_mart
 -- =============================================================================
@@ -115,35 +136,23 @@ SELECT
 FROM cte_seller_calc
 )
 
-SELECT
+SELECT DISTINCT
 	seller_key,
-	order_id,
 	seller_city,
 	seller_state,
-	order_item_id,
-	order_status,
-
-	price AS item_price,
-	freight_value AS item_shipping_cost,
-	payment_value total_order_payment,
 	sum_price_by_seller AS total_revenue,
 	sum_freight_by_seller AS total_shipping_revenue,
 	sum_freight_by_seller + sum_price_by_seller AS gross_merchandise_value,
 	total_orders,
 	overall_orders_by_seller AS total_items_sold,
 	ROUND((CAST(overall_orders_by_seller AS FLOAT) / NULLIF(total_orders, 0)), 2) AS items_per_order,
-
-	order_purchase_timestamp,
-	order_delivered_carrier_date,
 	first_order AS first_sale_date, 
 	last_order AS last_sale_date,
 	seller_lifespan_months,
-
 	ROUND((canceled_orders / CAST(total_orders AS FLOAT)) * 100, 2) AS cancellation_rate
 
 FROM cte_sellecr_calc_2
 GO
-
 -- ============================================================================= 
 -- Создание витрины клиентов: gold.customers_mart
 -- =============================================================================
@@ -202,10 +211,7 @@ SELECT
 	payment_sequential,
 	payment_installments,
 	price,
-	order_item_id,
-	freight_value,
 	payment_value,
-	order_status,
 	order_purchase_timestamp,
 	order_delivered_customer_date,
 	first_order, 
@@ -226,7 +232,6 @@ SELECT
 	ROUND((canceled_orders / CAST(ct_orders_by_client AS FLOAT)) * 100, 2) AS canceled_percent
 FROM cte_calc_gold_customers
 GO
-
 -- ============================================================================= 
 -- Создание витрины клиентов: gold.products_mart
 -- =============================================================================
@@ -267,7 +272,6 @@ order_item_id,
 product_category_name,
 price,
 freight_value,
-payment_value,
 order_date,
 order_month,
 order_quarter,
