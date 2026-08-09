@@ -32,25 +32,25 @@
 
 | Название колонки              | Тип даннных   | Описание                                                                                      |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| customer_key (PK)             | INT           | Surrogate key uniquely identifying each customer record in the dimension table.               |
-| customer_unique_id            | VARCHAR(32)   | Unique numerical identifier assigned to each customer.                                        |
-| order_id                      | VARCHAR(32)   | Alphanumeric identifier representing the customer, used for tracking and referencing.         |
-| customer_city                 | VARCHAR(50)   | The customer's first name, as recorded in the system.                                         |
-| customer_state                | CHAR(2)       | The customer's last name or family name.                                                      |
-| payment_sequential            | INT           | The country of residence for the customer (e.g., 'Australia').                                |
-| payment_installments          | INT           | The marital status of the customer (e.g., 'Married', 'Single').                               |
-| price                         | DECIMAL(10,2) | The gender of the customer (e.g., 'Male', 'Female', 'n/a').                                   |
-| payment_value                 | DECIMAL(10,2) | The date of birth of the customer, formatted as YYYY-MM-DD (e.g., 1971-10-06).                |
-| order_purchase_timestamp      | DATETIME      | The date and time when the customer record was created in the system                          |
-| order_delivered_customer_date | DATETIME      | The date and time when the customer record was created in the system                          |
-| first_order                   | DATETIME      | The date and time when the customer record was created in the system                          |
-| last_order                    | DATETIME      | The date and time when the customer record was created in the system                          |
-| months_lifespan               | INT           | The date and time when the customer record was created in the system                          |
-| total_orders                  | INT           | The date and time when the customer record was created in the system                          |
-| total_spent                   | FLOAT         | The date and time when the customer record was created in the system                          |
-| payment_type                  | VARCHAR(15)   | The date and time when the customer record was created in the system                          |
-| preferred_payment_type        | VARCHAR(11)   | The date and time when the customer record was created in the system                          |
-| canceled_percent              | FLOAT         | The date and time when the customer record was created in the system                          |
+| customer_key (PK)             | INT           |                |
+| customer_unique_id            | VARCHAR(32)   |                                     |
+| order_id                      | VARCHAR(32)   |         |
+| customer_city                 | VARCHAR(50)   |                                         |
+| customer_state                | CHAR(2)       |                                                     |
+| payment_sequential            | INT           |                                |
+| payment_installments          | INT           |                            |
+| price                         | DECIMAL(10,2) |                                |
+| payment_value                 | DECIMAL(10,2) |                |
+| order_purchase_timestamp      | DATETIME      |                          |
+| order_delivered_customer_date | DATETIME      |                          |
+| first_order                   | DATETIME      |                           |
+| last_order                    | DATETIME      |                          |
+| months_lifespan               | INT           |                         |
+| total_orders                  | INT           |                           |
+| total_spent                   | FLOAT         |                          |
+| payment_type                  | VARCHAR(15)   |                          |
+| preferred_payment_type        | VARCHAR(11)   |                          |
+| canceled_percent              | FLOAT         |                          |
 ---
 
 ### 3. **gold.products_mart**
@@ -59,25 +59,25 @@
 
 | Название колонки              | Тип даннных   | Описание                                                                                      |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| product_key (PK)              | INT           | Surrogate key uniquely identifying each customer record in the dimension table.               |
-| order_id                      | VARCHAR(32)   | Unique numerical identifier assigned to each customer.                                        |
-| order_item_id                 | INT           | Alphanumeric identifier representing the customer, used for tracking and referencing.         |
-| product_category_name         | VARCHAR(50)   | The customer's first name, as recorded in the system.                                         |
-| price                         | DECIMAL(10,2) | The customer's last name or family name.                                                      |
-| freigh_value                  | DECIMAL(10,2) | The country of residence for the customer (e.g., 'Australia').                                |
-| order_date                    | DATE          | The marital status of the customer (e.g., 'Married', 'Single').                               |
-| order_months                  | INT           | The gender of the customer (e.g., 'Male', 'Female', 'n/a').                                   |
-| order_quarter                 | INT           | The date of birth of the customer, formatted as YYYY-MM-DD (e.g., 1971-10-06).                |
-| order_day_of_week             | INT           | The date and time when the customer record was created in the system                          |
-| product_photos_count          | INT           | The date and time when the customer record was created in the system                          |
-| product_weight_grams          | DECIMAL(10,1) | The date and time when the customer record was created in the system                          |
-| product_lenght_cm             | DECIMAL(10,1) | The date and time when the customer record was created in the system                          |
-| product_height_cm             | DECIMAL(10,1) | The date and time when the customer record was created in the system                          |
-| product_width_cm              | DECIMAL(10,1) | The date and time when the customer record was created in the system                          |
-| total_item_cost               | DECIMAL(38,2) | The date and time when the customer record was created in the system                          |
-| total_order_shipping_cost     | DECIMAL(38,2) | The date and time when the customer record was created in the system                          |
-| shipping_to_price_ratio       | FLOAT         | The date and time when the customer record was created in the system                          |
-| is_free_shipping              | INT           | The date and time when the customer record was created in the system                          |
+| product_key (PK)              | INT           |               |
+| order_id                      | VARCHAR(32)   |                                       |
+| order_item_id                 | INT           |          |
+| product_category_name         | VARCHAR(50)   |                                         |
+| price                         | DECIMAL(10,2) |                                                   |
+| freigh_value                  | DECIMAL(10,2) |                              |
+| order_date                    | DATE          |                              |
+| order_months                  | INT           |                                   |
+| order_quarter                 | INT           |                |
+| order_day_of_week             | INT           |                          |
+| product_photos_count          | INT           |                         |
+| product_weight_grams          | DECIMAL(10,1) |                        |
+| product_lenght_cm             | DECIMAL(10,1) |                         |
+| product_height_cm             | DECIMAL(10,1) |                           |
+| product_width_cm              | DECIMAL(10,1) |                           |
+| total_item_cost               | DECIMAL(38,2) |                          |
+| total_order_shipping_cost     | DECIMAL(38,2) |                          |
+| shipping_to_price_ratio       | FLOAT         |                          |
+| is_free_shipping              | INT           |                         |
 ---
 
 ### 4. **gold.logistics_mart**
@@ -86,22 +86,22 @@
 
 | Название колонки              | Тип даннных   | Описание                                                                                      |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| seller_key (PK)               | INT           | Surrogate key uniquely identifying each customer record in the dimension table.               |
-| customer_key (PK)             | INT           | Unique numerical identifier assigned to each customer.                                        |
-| order_id                      | VARCHAR(32)   | Alphanumeric identifier representing the customer, used for tracking and referencing.         |
-| order_datetime                | DATETIME      | The customer's first name, as recorded in the system.                                         |
-| payment_datetime              | DATETIME      | The customer's last name or family name.                                                      |
-| shipping_date                 | DATETIME      | The country of residence for the customer (e.g., 'Australia').                                |
-| delivery_date                 | DATETIME      | The marital status of the customer (e.g., 'Married', 'Single').                               |
-| estimated_delivery            | DATE          | The gender of the customer (e.g., 'Male', 'Female', 'n/a').                                   |
-| shipping_deadline             | DATETIME      | The date of birth of the customer, formatted as YYYY-MM-DD (e.g., 1971-10-06).                |
-| actual_delivery_days          | INT           | The date and time when the customer record was created in the system                          |
-| seller_handling_days          | INT           | The date and time when the customer record was created in the system                          |
-| delivery_delay_days           | INT           | The date and time when the customer record was created in the system                          |
-| delay_responsible_party       | VARCHAR(13)   | The date and time when the customer record was created in the system                          |
-| seller_avg_delivery_days      | INT           | The date and time when the customer record was created in the system                          |
-| city_avg_delivery_days        | INT           | The date and time when the customer record was created in the system                          |
-| deadline_violation            | VARCHAR(3)    | The date and time when the customer record was created in the system                          |
+| seller_key (PK)               | INT           |               |
+| customer_key (PK)             | INT           |                                         |
+| order_id                      | VARCHAR(32)   |          |
+| order_datetime                | DATETIME      |                                         |
+| payment_datetime              | DATETIME      |                                                    |
+| shipping_date                 | DATETIME      |                                |
+| delivery_date                 | DATETIME      |                              |
+| estimated_delivery            | DATE          |                                   |
+| shipping_deadline             | DATETIME      |                 |
+| actual_delivery_days          | INT           |                          |
+| seller_handling_days          | INT           |                         |
+| delivery_delay_days           | INT           |                           |
+| delay_responsible_party       | VARCHAR(13)   |                        |
+| seller_avg_delivery_days      | INT           |                          |
+| city_avg_delivery_days        | INT           |                        |
+| deadline_violation            | VARCHAR(3)    |                        |
 ---
 
 ### 4. **gold.seller_mart**
@@ -110,17 +110,17 @@
 
 | Название колонки              | Тип даннных   | Описание                                                                                      |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| seller_key (PK)               | INT           | Surrogate key uniquely identifying each customer record in the dimension table.               |
-| seller_city                   | VARCHAR(50)   | Unique numerical identifier assigned to each customer.                                        |
-| seller_state                  | CHAR(2)       | Alphanumeric identifier representing the customer, used for tracking and referencing.         |
-| total_revenue                 | DECIMAL(38,2) | The customer's first name, as recorded in the system.                                         |
-| total_shipping_revenue        | DECIMAL(38,2) | The customer's last name or family name.                                                      |
-| gross_merchendise_value       | DECIMAL(38,2) | The country of residence for the customer (e.g., 'Australia').                                |
-| total_orders                  | INT           | The marital status of the customer (e.g., 'Married', 'Single').                               |
-| total_item_sold               | INT           | The gender of the customer (e.g., 'Male', 'Female', 'n/a').                                   |
-| items_per_order               | FLOAT         | The date of birth of the customer, formatted as YYYY-MM-DD (e.g., 1971-10-06).                |
-| first_sale_date               | DATETIME      | The date and time when the customer record was created in the system                          |
-| last_sale_date                | DATETIME      | The date and time when the customer record was created in the system                          |
-| seller_lifespan_months        | INT           | The date and time when the customer record was created in the system                          |
-| cancellation_rate             | FLOAT         | The date and time when the customer record was created in the system                          |
+| seller_key (PK)               | INT           |                |
+| seller_city                   | VARCHAR(50)   |                                    |
+| seller_state                  | CHAR(2)       |        |
+| total_revenue                 | DECIMAL(38,2) |                                        |
+| total_shipping_revenue        | DECIMAL(38,2) |                                                     |
+| gross_merchendise_value       | DECIMAL(38,2) |                              |
+| total_orders                  | INT           |                               |
+| total_item_sold               | INT           |                               |
+| items_per_order               | FLOAT         |                 |
+| first_sale_date               | DATETIME      |                          |
+| last_sale_date                | DATETIME      |                        |
+| seller_lifespan_months        | INT           |                         |
+| cancellation_rate             | FLOAT         |                       |
 ---
