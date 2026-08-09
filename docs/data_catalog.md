@@ -27,57 +27,57 @@
 ---
 
 ### 2. **gold.customers_mart**
-- **Цель:** 
+- **Цель:** Транзакционная бизнес-витрина, предназначенная для CRM-аналитики и оценки клиентской ценности (LTV). Содержит детальную историю покупок, обогащённую поведенческими метриками (жизненный цикл, частота отмен, финансовые траты и предпочтительные методы оплаты).
 - **Список колонок:**
 
 | Название колонки              | Тип даннных   | Описание                                                                                      |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| customer_key (PK)             | INT           |                |
-| customer_unique_id            | VARCHAR(32)   |                                     |
-| order_id                      | VARCHAR(32)   |         |
-| customer_city                 | VARCHAR(50)   |                                         |
-| customer_state                | CHAR(2)       |                                                     |
-| payment_sequential            | INT           |                                |
-| payment_installments          | INT           |                            |
-| price                         | DECIMAL(10,2) |                                |
-| payment_value                 | DECIMAL(10,2) |                |
-| order_purchase_timestamp      | DATETIME      |                          |
-| order_delivered_customer_date | DATETIME      |                          |
-| first_order                   | DATETIME      |                           |
-| last_order                    | DATETIME      |                          |
-| months_lifespan               | INT           |                         |
-| total_orders                  | INT           |                           |
-| total_spent                   | FLOAT         |                          |
-| payment_type                  | VARCHAR(15)   |                          |
-| preferred_payment_type        | VARCHAR(11)   |                          |
-| canceled_percent              | FLOAT         |                          |
+| customer_key (PK)             | INT           | Цифровой суррогатный ключ                                                                     |
+| customer_unique_id            | VARCHAR(32)   | Уникальный идентификатор личного кабинета покупателя (для связи между заказами)               |
+| order_id                      | VARCHAR(32)   | Идентификатор конкретного заказа клиента                                                      |
+| customer_city                 | VARCHAR(50)   | Город проживания покупателя                                                                   |
+| customer_state                | CHAR(2)       | Двухбуквенный код штата Бразилии                                                              |
+| payment_sequential            | INT           | Порядковый номер транзакции в рамках чека                                                     |
+| payment_installments          | INT           | Количество месяцев рассрочки для конкретной оплаты                                            |
+| price                         | DECIMAL(10,2) | Стоимость конкретного товара в заказе                                                         |
+| payment_value                 | DECIMAL(10,2) | Общая сумма по чеку                                                                           |
+| order_purchase_timestamp      | DATETIME      | Дата и время оформления заказа                                                                |
+| order_delivered_customer_date | DATETIME      | Фактическая дата и время вручения заказа покупателю                                           |
+| first_order                   | DATETIME      | Дата самого первого заказа клиента в истории платформы                                        |
+| last_order                    | DATETIME      | Дата последнего совершенного заказа клиента на текущий момент                                 |
+| months_lifespan               | INT           | Текущее время жизни клиента на платформе (в месяцах между первой и последней покупкой)        |
+| total_orders                  | INT           | Общее количество уникальных заказов, сделанных покупателем за всё время                       |
+| total_spent                   | FLOAT         | Совокупные исторические затраты покупателя                                                    |
+| payment_type                  | VARCHAR(15)   | Способ оплаты (Credit card, Voucher, Boleto, Debit card)                                      |
+| preferred_payment_type        | VARCHAR(11)   | Самый популярный способ оплаты у этого клиента (определяется по частоте транзакций)           |
+| canceled_percent              | FLOAT         | Доля отмененных заказов клиента от общего числа его покупок (%)                               |
 ---
 
 ### 3. **gold.products_mart**
-- **Цель:** 
+- **Цель:** Коммерческая бизнес-витрина, предназначенная для анализа продаж, сезонности спроса и контроля логистических издержек. Объединяет физические параметры товаров (габариты, вес, медиа-контент) с финансовыми результатами, позволяя оценивать долю затрат на доставку в цене товара.
 - **Список колонок:**
 
 | Название колонки              | Тип даннных   | Описание                                                                                      |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| product_key (PK)              | INT           |               |
-| order_id                      | VARCHAR(32)   |                                       |
-| order_item_id                 | INT           |          |
-| product_category_name         | VARCHAR(50)   |                                         |
-| price                         | DECIMAL(10,2) |                                                   |
-| freigh_value                  | DECIMAL(10,2) |                              |
-| order_date                    | DATE          |                              |
-| order_months                  | INT           |                                   |
-| order_quarter                 | INT           |                |
-| order_day_of_week             | INT           |                          |
-| product_photos_count          | INT           |                         |
-| product_weight_grams          | DECIMAL(10,1) |                        |
-| product_lenght_cm             | DECIMAL(10,1) |                         |
-| product_height_cm             | DECIMAL(10,1) |                           |
-| product_width_cm              | DECIMAL(10,1) |                           |
-| total_item_cost               | DECIMAL(38,2) |                          |
-| total_order_shipping_cost     | DECIMAL(38,2) |                          |
-| shipping_to_price_ratio       | FLOAT         |                          |
-| is_free_shipping              | INT           |                         |
+| product_key (PK)              | INT           | Цифровой суррогатный ключ                                                                     |
+| order_id                      | VARCHAR(32)   | Идентификатор заказа, в рамках которого был продан товар                                      |
+| order_item_id                 | INT           | Порядковый номер (индекс) товарной позиции в чеке                                             |
+| product_category_name         | VARCHAR(50)   | Название товарной категории                                                                   |
+| price                         | DECIMAL(10,2) | Чистая стоимость одной физической единицы товара                                              |
+| freigh_value                  | DECIMAL(10,2) | Стоимость доставки одной единицы товара                                                       |
+| order_date                    | DATE          | Дата совершения покупки                                                                       |
+| order_months                  | INT           | Порядковый номер месяца совершения заказа (1–12) для анализа сезонности                       |
+| order_quarter                 | INT           | Номер квартала совершения заказа (1–4) для макро-отчетности                                   |
+| order_day_of_week             | INT           | День недели совершения заказа (1–7) для выявления недельной цикличности спроса                |
+| product_photos_count          | INT           | Количество фотографий в карточке товара                                                       |
+| product_weight_grams          | DECIMAL(10,1) | Вес товара в граммах                                                                          |
+| product_lenght_cm             | DECIMAL(10,1) | Длина товара в сантиметрах                                                                    |
+| product_height_cm             | DECIMAL(10,1) | Высота товара в сантиметрах                                                                   |
+| product_width_cm              | DECIMAL(10,1) | Ширина товара в сантиметрах                                                                   |
+| total_item_cost               | DECIMAL(38,2) | Совокупная стоимость всех единиц данного товара                                               |
+| total_order_shipping_cost     | DECIMAL(38,2) | Общая стоимость доставки всех позиций                                                         |
+| shipping_to_price_ratio       | FLOAT         | Соотношение стоимости доставки к цене товара (%)                                              |
+| is_free_shipping              | INT           | Флаг бесплатной доставки для покупателя (1 — бесплатно, 0 — платно)                           |
 ---
 
 ### 4. **gold.logistics_mart**
