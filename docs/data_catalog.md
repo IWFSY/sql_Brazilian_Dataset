@@ -11,22 +11,22 @@
 
 | Название колонки              | Тип даннных     | Описание                                                                                    |
 |-------------------------------|---------------|-----------------------------------------------------------------------------------------------|
-| customer_key                  | INT           | Surrogate key uniquely identifying each customer record in the dimension table.               |
-| product_key                   | INT           | Unique numerical identifier assigned to each customer.                                        |
-| seller_key                    | INT           | Alphanumeric identifier representing the customer, used for tracking and referencing.         |
-| order_id                      | VARCHAR(32)   | The customer's first name, as recorded in the system.                                         |
-| item_sequence_number          | INT           | The customer's last name or family name.                                                      |
-| payment_method                | VARCHAR(15)   | The country of residence for the customer (e.g., 'Australia').                                |
-| payment_sequence              | INT           | The marital status of the customer (e.g., 'Married', 'Single').                               |
-| payment_installments          | INT           | The gender of the customer (e.g., 'Male', 'Female', 'n/a').                                   |
-| item_price                    | DECIMAL(10,2) | The date of birth of the customer, formatted as YYYY-MM-DD (e.g., 1971-10-06).                |
-| item_shipping_cost            | DECIMAL(10,2) | The date and time when the customer record was created in the system                          |
-| total_order_payment           | DECIMAL(10,2) | The date and time when the customer record was created in the system                          |
-| order_status                  | VARCHAR(15)   | The date and time when the customer record was created in the system                          |
-| order_datetime                | DATETIME      | The date and time when the customer record was created in the system                          |
+| customer_key                  | INT           | Цифровой суррогатный ключ для связи с витриной клиентов (gold.customers_mart)                 |
+| product_key                   | INT           | Цифровой суррогатный ключ для связи с витриной продуктов (gold.products_mart)                 |
+| seller_key                    | INT           | Цифровой суррогатный ключ для связи с витриной продавцов (gold.seller_mart)                   |
+| order_id                      | VARCHAR(32)   | Уникальный идентификатор заказа                                                               |
+| item_sequence_number          | INT           | Порядковый номер позиции товара в чеке                                                        |
+| payment_method                | VARCHAR(15)   | Тип оплаты (Credit card, Boleto, Voucher, Debit card)                                         |
+| payment_sequence              | INT           | Порядковый номер транзакции в рамках одного чека                                              |
+| payment_installments          | INT           | Количество месяцев предоставленной рассрочки                                                  |
+| item_price                    | DECIMAL(10,2) | Чистая стоимость одной единицы товара                                                         |
+| item_shipping_cost            | DECIMAL(10,2) | Стоимость доставки одной единицы товара                                                       |
+| total_order_payment           | DECIMAL(10,2) | Полная стоимость товаров по чеку                                                              |
+| order_status                  | VARCHAR(15)   | Текущий статус заказа (Delivered, Canceled)                                                   |
+| order_datetime                | DATETIME      | Дата и время совершения покупки                                                               |
 ---
 
-### 2. **gold.customer_mart**
+### 2. **gold.customers_mart**
 - **Цель:** 
 - **Список колонок:**
 
