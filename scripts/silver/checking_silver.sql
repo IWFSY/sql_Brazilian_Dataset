@@ -207,4 +207,3 @@ JOIN groupped_payment_value g ON d.order_id = g.order_id
 WHERE ABS(suma_payment_value - overall) > 0.05
 -- Собираем все в один запрос, для сопоставления значений и допуска в 0.05. Конечно, при необходимости допуск можно вовсе убрать. 
 
-
