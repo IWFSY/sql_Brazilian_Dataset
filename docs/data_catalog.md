@@ -16,8 +16,7 @@
 | seller_key                    | INT           | Цифровой суррогатный ключ для связи с измерением продавцов (gold.dim_sellers_mart)            |
 | order_id                      | VARCHAR(32)   | Уникальный идентификатор заказа                                                               |
 | order_item_id                 | INT           | Порядковый номер позиции товара в чеке                                                        |
-| payment_method                | VARCHAR(15)   | Тип оплаты (Credit card, Boleto, Voucher, Debit card)                                         |
-| payment_type                  | INT           | Порядковый номер транзакции в рамках одного чека                                              |
+| payment_type                  | VARCHAR(15)   | Тип оплаты (Credit card, Boleto, Voucher, Debit card)                                         |
 | payment_sequential            | INT           | Порядковый номер транзакции в рамках чека                                                     |
 | payment_installments          | INT           | Количество месяцев предоставленной рассрочки                                                  |
 | price                         | DECIMAL(10,2) | Чистая стоимость одной единицы товара                                                         |
