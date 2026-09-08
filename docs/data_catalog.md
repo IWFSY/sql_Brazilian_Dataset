@@ -55,9 +55,9 @@
 | product_category_name         | VARCHAR(50)   | Название товарной категории                                                                   |
 | product_name_length           | INT           | Количество символов в названии товара                                                         |
 | product_description_length    | INT           | Количество символов в описании товара                                                         |
-| product_photos_count          | INT           | Количество фотографий в карточке товара                                                       |
-| product_weight_grams          | DECIMAL(10,1) | Вес товара в граммах                                                                          |
-| product_lenght_cm             | DECIMAL(10,1) | Длина товара в сантиметрах                                                                    |
+| product_photos_qty            | INT           | Количество фотографий в карточке товара                                                       |
+| product_weight_g              | DECIMAL(10,1) | Вес товара в граммах                                                                          |
+| product_length_cm             | DECIMAL(10,1) | Длина товара в сантиметрах                                                                    |
 | product_height_cm             | DECIMAL(10,1) | Высота товара в сантиметрах                                                                   |
 | product_width_cm              | DECIMAL(10,1) | Ширина товара в сантиметрах                                                                   |
 ---
