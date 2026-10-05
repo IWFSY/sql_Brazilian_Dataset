@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "fefd14b0dde4974d7786",
+  "position": {
+    "x": 250.00000000000003,
+    "y": 745.71428571428578,
+    "z": 19000,
+    "height": 312.85714285714289,
+    "width": 1208.5714285714287,
+    "tabOrder": 4000
+  },
+  "visualGroup": {
+    "displayName": "Группа продавцы",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

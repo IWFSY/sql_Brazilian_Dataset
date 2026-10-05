@@ -1,0 +1,456 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "a70cf5472602d9ac2ec8",
+  "position": {
+    "x": 0,
+    "y": 54.693877551020321,
+    "z": 1000,
+    "height": 247.14285714285717,
+    "width": 1205.7142857142858,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_customers_mart"
+                    }
+                  },
+                  "Property": "Город клиента"
+                }
+              },
+              "queryRef": "dim_customers_mart.Город клиента",
+              "nativeQueryRef": "Город",
+              "active": true,
+              "displayName": "Город"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_sellers_mart"
+                    }
+                  },
+                  "Property": "seller_key"
+                }
+              },
+              "queryRef": "dim_sellers_mart.seller_key",
+              "nativeQueryRef": "seller_key",
+              "active": false
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Заказов оформлено"
+                }
+              },
+              "queryRef": "_measures.Заказов оформлено",
+              "nativeQueryRef": "Заказов оформлено"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Выручка по заказам"
+                }
+              },
+              "queryRef": "_measures.Выручка по заказам",
+              "nativeQueryRef": "Выручка по заказам"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Средний чек заказа (AOV)"
+                }
+              },
+              "queryRef": "_measures.Средний чек заказа (AOV)",
+              "nativeQueryRef": "AOV",
+              "displayName": "AOV"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Количество товаров в чеке (UPT)"
+                }
+              },
+              "queryRef": "_measures.Количество товаров в чеке (UPT)",
+              "nativeQueryRef": "UPT",
+              "displayName": "UPT"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Процент отмененных заказов"
+                }
+              },
+              "queryRef": "_measures.Процент отмененных заказов",
+              "nativeQueryRef": "Отмененных заказов",
+              "displayName": "Отмененных заказов"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Доля просроченных доставок (SLA)"
+                }
+              },
+              "queryRef": "_measures.Доля просроченных доставок (SLA)",
+              "nativeQueryRef": "SLA",
+              "displayName": "SLA"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dim_sellers_mart"
+                        }
+                      },
+                      "Property": "Первый заказ"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(dim_sellers_mart.Первый заказ)",
+              "nativeQueryRef": "Первый заказ",
+              "displayName": "Первый заказ"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dim_sellers_mart"
+                        }
+                      },
+                      "Property": "Последний заказ"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Min(dim_sellers_mart.Последний заказ)",
+              "nativeQueryRef": "Последние Последний заказ",
+              "displayName": "Последний заказ"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Aggregation": {
+                "Expression": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "dim_sellers_mart"
+                      }
+                    },
+                    "Property": "Первый заказ"
+                  }
+                },
+                "Function": 3
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "225.07160200694472D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_customers_mart.Город клиента"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "106.85712166307266D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_customers_mart.Первый заказ"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "149.61595731667575D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(dim_customers_mart.Уникальный ID клиента)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "139.57142830640396D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Заказов оформлено"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "44.714275493869664D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Количество товаров в чеке (UPT)"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "_measures.Доля просроченных доставок (SLA)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "133.73157748006994D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(dim_sellers_mart.Первый заказ)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "138.9999945926801D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(dim_sellers_mart.Последний заказ)"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ],
+      "subTotals": [
+        {
+          "properties": {
+            "columnSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "perRowLevel": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "rowSubtotalsPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Bottom'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "rowHeaders": [
+        {
+          "properties": {
+            "unfrozen": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F9F6F0'"
+                    }
+                  }
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Матрица статистики по выбранному городу'"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'''Segoe UI Semibold'', wf_segoe-ui_semibold, helvetica, arial, sans-serif'"
+                }
+              }
+            },
+            "heading": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Heading3'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "fefd14b0dde4974d7786"
+}

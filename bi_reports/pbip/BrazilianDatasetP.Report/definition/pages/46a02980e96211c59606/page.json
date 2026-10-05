@@ -1,0 +1,65 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "46a02980e96211c59606",
+  "displayName": "Клиенты и Продавцы",
+  "displayOption": "FitToPage",
+  "height": 1080,
+  "width": 1920,
+  "pageBinding": {
+    "name": "a89f5e27440605b5ecdc",
+    "type": "Default",
+    "parameters": [],
+    "acceptsFilterContext": "None"
+  },
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'#CBB99D'"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "d9f4d6bc2cbd1b867060",
+      "target": "ab060ef08d5cad03ad7e",
+      "type": "DataFilter"
+    },
+    {
+      "source": "d9f4d6bc2cbd1b867060",
+      "target": "d1c1014ca8c104835805",
+      "type": "DataFilter"
+    },
+    {
+      "source": "d9f4d6bc2cbd1b867060",
+      "target": "3046e84d04c6050207b9",
+      "type": "HighlightFilter"
+    },
+    {
+      "source": "68dfc8553009c006eeac",
+      "target": "d9f4d6bc2cbd1b867060",
+      "type": "DataFilter"
+    },
+    {
+      "source": "68dfc8553009c006eeac",
+      "target": "3046e84d04c6050207b9",
+      "type": "HighlightFilter"
+    },
+    {
+      "source": "d9f4d6bc2cbd1b867060",
+      "target": "68dfc8553009c006eeac",
+      "type": "DataFilter"
+    }
+  ]
+}
