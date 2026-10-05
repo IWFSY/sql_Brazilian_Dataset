@@ -1,0 +1,66 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "5dc52385905371022322",
+      "displayName": "выручка регионы",
+      "children": [
+        "e584e13e793570055d05",
+        "3a6a300112ba0d8c1ad1"
+      ]
+    },
+    {
+      "name": "ea63490bdbd7a47a2558",
+      "displayName": "категории (выручка)",
+      "children": [
+        "0b6802153c954a94d813",
+        "f2ced65d050b0e2223ec"
+      ]
+    },
+    {
+      "name": "b163cf76c1480a64b0c8",
+      "displayName": "доля доставок (лог)",
+      "children": [
+        "2c0f8810476eca955938",
+        "a5f306a41a9c0623e75a"
+      ]
+    },
+    {
+      "name": "1a20f5bc66bb91aeb111",
+      "displayName": "категории (лог)",
+      "children": [
+        "4e6c924628bd1411abe7",
+        "03f0b6eccd7911861bb2"
+      ]
+    },
+    {
+      "name": "c90654ae96091bae48a7",
+      "displayName": "Сброс(коммерция)",
+      "children": [
+        "7b05c25c4d00cd08e100"
+      ]
+    },
+    {
+      "name": "856c8530e9b4076305e5",
+      "displayName": "Сброс(логистика)",
+      "children": [
+        "417b4b00ed6775215bd7"
+      ]
+    },
+    {
+      "name": "3ed6370699922738de9e",
+      "displayName": "клиент и продавец",
+      "children": [
+        "574ba162a985eb989836",
+        "e2010adcee0c0309d95e"
+      ]
+    },
+    {
+      "name": "a44696978ece39a0a278",
+      "displayName": "Сброс(клиенты)",
+      "children": [
+        "24547e5d4a57e20bacab"
+      ]
+    }
+  ]
+}
