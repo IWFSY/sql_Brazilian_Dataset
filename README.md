@@ -35,7 +35,7 @@
 - **Документация**: Предоставить чёткую документацию модели данных для поддержки как бизнес-заинтересованных сторон, так и аналитических команд. 
 
 ## 🗝️ Важные ссылки и инструменты:
-- **[Notion](https://app.notion.com/p/DWH-3ac8f9184c8680f78ecddc10c7689c03):** Этапы и планирование проекта.
+- **[Notion](https://app.notion.com/p/DWH-3ac8f9184c8680f78ecddc10c7689c03?source=copy_link):** Этапы и планирование проекта.
 - **[SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads):** Сервер для размещения SQL-базы данных.
 - **[SQL Server Management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16):** Графический интерфейс для управления и взаимодействия с базами данных.
 - **[Draw.io](https://www.drawio.com/):** Архитектура данных проектирования, модели, потоки и диаграммы.
