@@ -1,0 +1,19 @@
+role 'Regional Acess'
+	modelPermission: read
+
+	tablePermission dim_customers_mart = ```
+			dim_customers_mart[Регион клиента] IN 
+			CALCULATETABLE(
+			    VALUES(security[state]),
+			    security[employee_email] = USERPRINCIPALNAME())
+			```
+
+	tablePermission dim_sellers_mart = ```
+			dim_sellers_mart[Регион продавца] IN 
+			CALCULATETABLE(
+			    VALUES(security[state]),
+			    security[employee_email] = USERPRINCIPALNAME())
+			```
+
+	annotation PBI_Id = 603a8c84d4ee4a438f17b727f557f7b4
+

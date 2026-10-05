@@ -1,0 +1,41 @@
+table dim_order_status
+	lineageTag: f55655c0-cb6f-45aa-9a88-6d81344ff677
+
+	column order_status_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 619ceeb3-2341-4fb2-a3b4-d63d0b23ca7e
+		summarizeBy: none
+		sourceColumn: order_status_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Статус заказа'
+		dataType: string
+		lineageTag: 516e4aca-f6a6-40d9-a076-721a5f2133af
+		summarizeBy: none
+		sourceColumn: Статус заказа
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_order_status = m
+		mode: import
+		queryGroup: 2_Dimentions
+		source =
+				let
+				    Источник = #"gold fact_mart",
+				    #"Удаленные столбцы" = Table.RemoveColumns(Источник,{"customer_key", "product_key", "seller_key", "order_id", "order_item_id", "payment_type", "payment_sequential", "payment_installments", "price", "freight_value", "payment_value", "shipping_limit_date", "order_purchase_date", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+				    #"Удаленные дубликаты" = Table.Distinct(#"Удаленные столбцы"),
+				    #"Добавлен индекс" = Table.AddIndexColumn(#"Удаленные дубликаты", "Индекс", 1, 1, Int64.Type),
+				    #"Переупорядоченные столбцы" = Table.ReorderColumns(#"Добавлен индекс",{"Индекс", "order_status"}),
+				    #"Переименованные столбцы" = Table.RenameColumns(#"Переупорядоченные столбцы",{{"Индекс", "order_status_key"}, {"order_status", "Статус заказа"}})
+				in
+				    #"Переименованные столбцы"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

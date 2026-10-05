@@ -1,0 +1,41 @@
+table dim_payment_type
+	lineageTag: 03a81869-d157-4d1d-8d38-ae88ac2f558d
+
+	column payment_type_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b354a4e9-1322-47d6-8554-240a92c2876c
+		summarizeBy: none
+		sourceColumn: payment_type_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Тип оплаты'
+		dataType: string
+		lineageTag: 437fb334-1fb9-484e-a2e7-887169e4c782
+		summarizeBy: none
+		sourceColumn: Тип оплаты
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_payment_type = m
+		mode: import
+		queryGroup: 2_Dimentions
+		source =
+				let
+				    Источник = #"gold fact_mart",
+				    #"Удаленные столбцы" = Table.RemoveColumns(Источник,{"customer_key", "product_key", "seller_key", "order_id", "order_item_id", "payment_sequential", "payment_installments", "price", "freight_value", "payment_value", "order_status", "shipping_limit_date", "order_purchase_date", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+				    #"Удаленные дубликаты" = Table.Distinct(#"Удаленные столбцы"),
+				    #"Добавлен индекс" = Table.AddIndexColumn(#"Удаленные дубликаты", "Индекс", 1, 1, Int64.Type),
+				    #"Переупорядоченные столбцы" = Table.ReorderColumns(#"Добавлен индекс",{"Индекс", "payment_type"}),
+				    #"Переименованные столбцы" = Table.RenameColumns(#"Переупорядоченные столбцы",{{"Индекс", "payment_type_key"}, {"payment_type", "Тип оплаты"}})
+				in
+				    #"Переименованные столбцы"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

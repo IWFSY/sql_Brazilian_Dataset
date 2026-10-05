@@ -1,0 +1,46 @@
+table security
+	isHidden
+	lineageTag: 70e5f92d-7e3d-4364-a386-a6d97381958b
+
+	column employee_email
+		dataType: string
+		isHidden
+		lineageTag: e8fc3da6-11dd-414d-900b-795c3632b1b5
+		summarizeBy: none
+		sourceColumn: employee_email
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		isHidden
+		lineageTag: 1da70a58-e5a1-4908-9208-718d213dcb44
+		summarizeBy: none
+		sourceColumn: state
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition security = m
+		mode: import
+		queryGroup: 4_Other
+		source =
+				let
+				    Источник = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WSsssKi7RTc0tyMmvTC1yKEktLtFLzs9V0lEyUIrViVYqTk3Oz0vBqsAQrKAkI7MIu7wRWD4tv7SoJAOrAmOl2FgA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Столбец1 = _t, Столбец2 = _t]),
+				    #"Измененный тип" = Table.TransformColumnTypes(Источник,{{"Столбец1", type text}, {"Столбец2", Int64.Type}}),
+				    #"Объединенные запросы" = Table.NestedJoin(#"Измененный тип", {"Столбец2"}, unique_state, {"Остаток от деления"}, "unique_state", JoinKind.LeftOuter),
+				    #"Развернутый элемент unique_state" = Table.ExpandTableColumn(#"Объединенные запросы", "unique_state", {"customer_state"}, {"customer_state"}),
+				    #"Удаленные столбцы" = Table.RemoveColumns(#"Развернутый элемент unique_state",{"Столбец2"}),
+				    #"Переименованные столбцы" = Table.RenameColumns(#"Удаленные столбцы",{{"Столбец1", "employee_email"}, {"customer_state", "state"}})
+				in
+				    #"Переименованные столбцы"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

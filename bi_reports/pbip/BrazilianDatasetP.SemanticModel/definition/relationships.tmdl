@@ -1,0 +1,80 @@
+relationship AutoDetected_ebe54933-e61f-4300-97b3-ad389fe0e0f8
+	fromColumn: fact_order_items.product_key
+	toColumn: dim_products_mart.product_key
+
+relationship AutoDetected_57eb87f1-8453-4aca-8513-af9a4109ee17
+	fromColumn: fact_order_items.order_status_key
+	toColumn: dim_order_status.order_status_key
+
+relationship AutoDetected_dd7340e7-6296-4b26-bf22-5fe33dcc1a57
+	fromColumn: fact_order_items.customer_key
+	toColumn: dim_customers_mart.customer_key
+
+relationship AutoDetected_e958d830-4ee8-422b-a3d5-9d90c78a00f1
+	fromColumn: fact_order_items.seller_key
+	toColumn: dim_sellers_mart.seller_key
+
+relationship AutoDetected_a8da3c1d-9005-4b5b-b5f7-21eb0ca1664a
+	fromColumn: fact_order_payments.payment_type_key
+	toColumn: dim_payment_type.payment_type_key
+
+relationship AutoDetected_7ac94394-e2d0-4eb2-b8e1-b634e5e7c9f6
+	fromColumn: fact_order_payments.customer_key
+	toColumn: dim_customers_mart.customer_key
+
+relationship 5c38c006-682f-45d5-fbc8-7413682ce597
+	isActive: false
+	fromColumn: fact_order_payments.'Дата подтверждения заказа'
+	toColumn: dim_date.Дата
+
+relationship 996bf392-421d-ce22-146e-9e5ce37e4275
+	fromColumn: fact_order_payments.'Дата создания заказа'
+	toColumn: dim_date.Дата
+
+relationship 4f5e1893-2501-6858-6691-7320b1d03054
+	fromColumn: fact_order_items.'Дата создания заказа'
+	toColumn: dim_date.Дата
+
+relationship 29bbab4d-b94a-d0e9-85a3-a732aab2ccfb
+	isActive: false
+	fromColumn: fact_order_items.'Дата передачи в службу доставки'
+	toColumn: dim_date.Дата
+
+relationship 920c3c58-b81d-6753-0e7f-424cbd7f44e9
+	isActive: false
+	fromColumn: fact_order_items.'Дата вручения заказа'
+	toColumn: dim_date.Дата
+
+relationship 1a3ff96d-c4e5-0ef2-983e-9b930c7eb61b
+	isActive: false
+	fromColumn: fact_order_items.'Планируемая дата доставки'
+	toColumn: dim_date.Дата
+
+relationship da7fb35b-9f5f-95ee-a65d-fcfcb3daed90
+	isActive: false
+	fromColumn: fact_order_items.'Дата подтверждения заказа'
+	toColumn: dim_date.Дата
+
+relationship af9a05ea-6a6f-759f-529a-33aa0f21b223
+	isActive: false
+	fromColumn: fact_order_items.'Крайний срок отгрузки'
+	toColumn: dim_date.Дата
+
+relationship 3cfd464d-b386-dacd-a4b8-954e0962bc77
+	fromColumn: dim_customers_mart.'Регион клиента'
+	toColumn: security.state
+
+relationship f0d68ac3-75a6-fd90-38e9-84d50b7a3cb8
+	isActive: false
+	fromColumn: dim_sellers_mart.'Регион продавца'
+	toColumn: security.state
+
+relationship 79f0212d-88c9-ee47-6c98-3d93007d39d3
+	fromColumn: fact_order_payments.'ID заказа'
+	toColumn: confirmed_dim.'ID заказа'
+
+relationship 23471dc1-375c-81c5-82b7-5ccf2f33c3f5
+	crossFilteringBehavior: bothDirections
+	fromColumn: fact_order_items.'ID заказа'
+	toColumn: confirmed_dim.'ID заказа'
+

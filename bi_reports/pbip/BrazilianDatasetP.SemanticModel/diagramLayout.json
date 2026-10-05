@@ -1,0 +1,164 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 64,
+        "y": 33
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 334.31189604371252,
+            "y": 573.62664404965471
+          },
+          "nodeIndex": "dim_customers_mart",
+          "nodeLineageTag": "2c15fd3e-4fb9-42c3-ab62-61bbe938d350",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 58.770776459734066,
+            "y": 0
+          },
+          "nodeIndex": "dim_order_status",
+          "nodeLineageTag": "f55655c0-cb6f-45aa-9a88-6d81344ff677",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 1114.0455834986919,
+            "y": 14
+          },
+          "nodeIndex": "dim_payment_type",
+          "nodeLineageTag": "03a81869-d157-4d1d-8d38-ae88ac2f558d",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 838.05710055892393,
+            "y": 598.789573102697
+          },
+          "nodeIndex": "dim_products_mart",
+          "nodeLineageTag": "cd226050-377c-42e3-a921-76a921cb7d15",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 282.40876063763858
+          },
+          "nodeIndex": "dim_sellers_mart",
+          "nodeLineageTag": "44c81c52-1da9-42cc-be21-72f1c1fa6785",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 596.05710055892393,
+            "y": 0
+          },
+          "nodeIndex": "dim_date",
+          "nodeLineageTag": "19044507-c1d3-4989-94f8-1a125ae97682",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 315.85586687233706,
+            "y": 155.39635214663315
+          },
+          "nodeIndex": "fact_order_items",
+          "nodeLineageTag": "1a8bcd4c-3316-415f-b216-f92365899a00",
+          "size": {
+            "height": 358,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 964.057100558924,
+            "y": 251.89478655134849
+          },
+          "nodeIndex": "fact_order_payments",
+          "nodeLineageTag": "11e8fae0-4aa5-4ebc-8c6b-42597020ad8e",
+          "size": {
+            "height": 226,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 565.31332202482736
+          },
+          "nodeIndex": "security",
+          "nodeLineageTag": "70e5f92d-7e3d-4364-a386-a6d97381958b",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 626.04558349869194,
+            "y": 263.89478655134849
+          },
+          "nodeIndex": "confirmed_dim",
+          "nodeLineageTag": "af607fd8-4c49-4afc-9533-314dfe000835",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 1125.0455834986919,
+            "y": 500.39478655134849
+          },
+          "nodeIndex": "_measures",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 1
+        }
+      ],
+      "name": "Все таблицы",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Все таблицы",
+  "defaultDiagram": "Все таблицы"
+}

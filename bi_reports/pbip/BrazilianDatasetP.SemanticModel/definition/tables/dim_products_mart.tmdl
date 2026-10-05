@@ -1,0 +1,122 @@
+table dim_products_mart
+	lineageTag: cd226050-377c-42e3-a921-76a921cb7d15
+
+	column product_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 614abeb2-702d-4ddd-8736-2cef44875178
+		summarizeBy: none
+		sourceColumn: product_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Категория товара'
+		dataType: string
+		lineageTag: 3e6e2224-5d30-4044-8da1-d0a48e52c04a
+		summarizeBy: none
+		sourceColumn: Категория товара
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Длина названия товара (символов)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 4997f645-16c2-4e2b-9dad-45f06c91e5c3
+		summarizeBy: none
+		sourceColumn: Длина названия товара (символов)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Длина описания товара (символов)'
+		dataType: int64
+		formatString: 0
+		lineageTag: b77bcedd-bbe8-4d57-bc92-8d3b5e906fec
+		summarizeBy: none
+		sourceColumn: Длина описания товара (символов)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Количество фото товара'
+		dataType: int64
+		formatString: 0
+		lineageTag: aaf14c86-659c-44ac-b10d-730d6e770084
+		summarizeBy: none
+		sourceColumn: Количество фото товара
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Вес товара (г)'
+		dataType: double
+		lineageTag: 0b138795-cf45-4da4-bb3d-d8dc579f2422
+		summarizeBy: none
+		sourceColumn: Вес товара (г)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Длина товара (см)'
+		dataType: double
+		lineageTag: 93242bf6-22fc-4f8c-8be3-c66097b3bb6b
+		summarizeBy: none
+		sourceColumn: Длина товара (см)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Высота товара (см)'
+		dataType: double
+		lineageTag: 544fae3d-26fe-4e0b-a2bd-9a9486786498
+		summarizeBy: none
+		sourceColumn: Высота товара (см)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Ширина товара (см)'
+		dataType: double
+		lineageTag: ec4ed6e5-8a30-4a21-b510-802a8d03fc6b
+		summarizeBy: none
+		sourceColumn: Ширина товара (см)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Категория товара(на английском)'
+		dataType: string
+		lineageTag: ad2c9d11-1c51-4db0-8bbb-ee492fd685de
+		summarizeBy: none
+		sourceColumn: Категория товара(на английском)
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_products_mart = m
+		mode: import
+		queryGroup: 2_Dimentions
+		source =
+				let
+				    Источник = #"gold dim_products_mart",
+				    #"Переименованные столбцы" = Table.RenameColumns(Источник,{{"product_category_name", "Категория товара"}, {"product_description_length", "Длина описания товара (символов)"}, {"product_height_cm", "Высота товара (см)"}, {"product_length_cm", "Длина товара (см)"}, {"product_name_length", "Длина названия товара (символов)"}, {"product_photos_qty", "Количество фото товара"}, {"product_weight_g", "Вес товара (г)"}, {"product_width_cm", "Ширина товара (см)"}}),
+				    #"Объединенные запросы" = Table.NestedJoin(#"Переименованные столбцы", {"Категория товара"}, product_category_name_translation, {"product_category_name"}, "product_category_name_translation", JoinKind.LeftOuter),
+				    #"Развернутый элемент product_category_name_translation" = Table.ExpandTableColumn(#"Объединенные запросы", "product_category_name_translation", {"product_category_name_english"}, {"product_category_name_translation.product_category_name_english"}),
+				    #"Удаленные столбцы" = Table.RemoveColumns(#"Развернутый элемент product_category_name_translation",{"product_category_name_translation.product_category_name_english"}),
+				    #"Выполнена капитализация каждого слова" = Table.TransformColumns(#"Удаленные столбцы",{{"Категория товара", Text.Proper, type text}}),
+				    #"Объединенные запросы1" = Table.NestedJoin(#"Выполнена капитализация каждого слова", {"Категория товара"}, product_category_name_translation, {"product_category_name"}, "product_category_name_translation", JoinKind.LeftOuter),
+				    #"Развернутый элемент product_category_name_translation1" = Table.ExpandTableColumn(#"Объединенные запросы1", "product_category_name_translation", {"product_category_name_english"}, {"product_category_name_translation.product_category_name_english"}),
+				    #"Переименованные столбцы1" = Table.RenameColumns(#"Развернутый элемент product_category_name_translation1",{{"product_category_name_translation.product_category_name_english", "Категория товара(на английском)"}}),
+				    #"Переупорядоченные столбцы" = Table.ReorderColumns(#"Переименованные столбцы1",{"product_key", "Категория товара", "Категория товара(на английском)", "Длина названия товара (символов)", "Длина описания товара (символов)", "Количество фото товара", "Вес товара (г)", "Длина товара (см)", "Высота товара (см)", "Ширина товара (см)"}),
+				    #"Выполнена капитализация каждого слова1" = Table.TransformColumns(#"Переупорядоченные столбцы",{{"Категория товара(на английском)", Text.Proper, type text}}),
+				    #"Замененное значение" = Table.ReplaceValue(#"Выполнена капитализация каждого слова1","_"," ",Replacer.ReplaceText,{"Категория товара(на английском)"})
+				in
+				    #"Замененное значение"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

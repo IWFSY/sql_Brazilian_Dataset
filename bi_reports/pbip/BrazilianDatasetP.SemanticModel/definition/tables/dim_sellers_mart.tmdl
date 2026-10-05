@@ -1,0 +1,111 @@
+table dim_sellers_mart
+	lineageTag: 44c81c52-1da9-42cc-be21-72f1c1fa6785
+
+	column seller_key
+		dataType: int64
+		formatString: 0
+		lineageTag: baebd383-8795-4c8e-8fc6-b6e031a83834
+		summarizeBy: none
+		sourceColumn: seller_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Город продавца'
+		dataType: string
+		lineageTag: 55be8c86-9d32-4bbe-b57e-30df1b61fc2b
+		dataCategory: Place
+		summarizeBy: none
+		sourceColumn: Город продавца
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Регион продавца'
+		dataType: string
+		lineageTag: f6f638b6-337d-458b-a820-6f1c30012717
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: Регион продавца
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Почтовый индекс продавца'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0617a3d9-9829-4de5-9061-4bba90f22174
+		summarizeBy: none
+		sourceColumn: Почтовый индекс продавца
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Первый заказ' =
+			
+			VAR seller_key = dim_sellers_mart[seller_key]
+			RETURN
+			CALCULATE(
+			    MIN(fact_order_items[Дата создания заказа]),
+			    FILTER(
+			        ALL(fact_order_items),
+			        RELATED(dim_sellers_mart[seller_key]) = seller_key
+			    )
+			)
+		formatString: Long Date
+		lineageTag: f8c6431f-276a-4c32-9164-dcbd6a8a89d5
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Последний заказ' =
+			
+			VAR seller_key = dim_sellers_mart[seller_key]
+			RETURN
+			CALCULATE(
+			    MAX(fact_order_items[Дата создания заказа]),
+			    FILTER(
+			        ALL(fact_order_items),
+			        RELATED(dim_sellers_mart[seller_key]) = seller_key
+			    )
+			)
+		formatString: Long Date
+		lineageTag: 4ce2f567-9d96-4e11-a0c4-381f152f69c6
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Время жизни продавца' = ```
+			
+			DATEDIFF(
+			    dim_sellers_mart[Первый заказ], 
+			    dim_sellers_mart[Последний заказ], 
+			    DAY
+			)
+			```
+		formatString: 0
+		lineageTag: ba0dd460-cce3-4b73-9493-cce39efc35d3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_sellers_mart = m
+		mode: import
+		queryGroup: 2_Dimentions
+		source =
+				let
+				    Источник = #"gold dim_sellers_mart",
+				    #"Переименованные столбцы" = Table.RenameColumns(Источник,{{"seller_city", "Город продавца"}, {"seller_state", "Регион продавца"}, {"seller_zip_code_prefix", "Почтовый индекс продавца"}})
+				in
+				    #"Переименованные столбцы"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

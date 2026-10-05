@@ -1,0 +1,95 @@
+expression 'gold dim_products_mart' =
+		let
+		    Источник = Sql.Database("localhost\SQLEXPRESS", "BrazilianDataset"),
+		    gold_dim_products_mart = Источник{[Schema="gold",Item="dim_products_mart"]}[Data]
+		in
+		    gold_dim_products_mart
+	lineageTag: f6385abb-3474-4918-971d-3888f6921de4
+	queryGroup: 1_Import
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+
+expression 'gold dim_customers_mart' =
+		let
+		    Источник = Sql.Database("localhost\SQLEXPRESS", "BrazilianDataset"),
+		    gold_dim_customers_mart = Источник{[Schema="gold",Item="dim_customers_mart"]}[Data]
+		in
+		    gold_dim_customers_mart
+	lineageTag: 61a5f92d-4d9d-4037-81e5-962711a12d4f
+	queryGroup: 1_Import
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+
+expression 'gold dim_sellers_mart' =
+		let
+		    Источник = Sql.Database("localhost\SQLEXPRESS", "BrazilianDataset"),
+		    gold_dim_sellers_mart = Источник{[Schema="gold",Item="dim_sellers_mart"]}[Data]
+		in
+		    gold_dim_sellers_mart
+	lineageTag: e57e1daf-9696-4773-be6e-c51c6bc30640
+	queryGroup: 1_Import
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+
+expression 'gold fact_mart' =
+		let
+		    Источник = Sql.Database("localhost\SQLEXPRESS", "BrazilianDataset"),
+		    gold_fact_mart = Источник{[Schema="gold",Item="fact_mart"]}[Data]
+		in
+		    gold_fact_mart
+	lineageTag: 0df49442-53a2-4263-8f0d-33f90c03a187
+	queryGroup: 1_Import
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+
+expression unique_state =
+		let
+		    Источник = Sql.Database("localhost\SQLEXPRESS", "BrazilianDataset"),
+		    gold_dim_customers_mart = Источник{[Schema="gold",Item="dim_customers_mart"]}[Data],
+		    #"Удаленные столбцы" = Table.RemoveColumns(gold_dim_customers_mart,{"customer_key", "customer_unique_id", "customer_zip_code_prefix"}),
+		    #"Удаленные дубликаты" = Table.Distinct(#"Удаленные столбцы"),
+		    #"Удаленные столбцы1" = Table.RemoveColumns(#"Удаленные дубликаты",{"customer_city"}),
+		    #"Удаленные дубликаты1" = Table.Distinct(#"Удаленные столбцы1"),
+		    #"Добавлен индекс" = Table.AddIndexColumn(#"Удаленные дубликаты1", "Индекс", 0, 1, Int64.Type),
+		    #"Вычисленный остаток от деления" = Table.TransformColumns(#"Добавлен индекс", {{"Индекс", each Number.Mod(_, 4), type number}}),
+		    #"Удаленные столбцы2" = Table.RemoveColumns(#"Вычисленный остаток от деления",{"Индекс"}),
+		    #"Добавлен индекс1" = Table.AddIndexColumn(#"Удаленные столбцы2", "Индекс", 1, 1, Int64.Type),
+		    #"Вставлено: деление с остатком" = Table.AddColumn(#"Добавлен индекс1", "Остаток от деления", each Number.Mod([Индекс], 4), type number),
+		    #"Удаленные столбцы3" = Table.RemoveColumns(#"Вставлено: деление с остатком",{"Индекс", "Остаток от деления"}),
+		    #"Добавлен индекс2" = Table.AddIndexColumn(#"Удаленные столбцы3", "Индекс", 0, 1, Int64.Type),
+		    #"Вставлено: деление с остатком1" = Table.AddColumn(#"Добавлен индекс2", "Остаток от деления", each Number.Mod([Индекс], 4), type number),
+		    #"Удаленные столбцы4" = Table.RemoveColumns(#"Вставлено: деление с остатком1",{"Индекс"})
+		in
+		    #"Удаленные столбцы4"
+	lineageTag: b2d1fe65-61bc-4861-8fc9-3c3e45b5f226
+	queryGroup: 4_Other
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+
+expression product_category_name_translation =
+		let
+		    Источник = Csv.Document(File.Contents("D:\Downloads\product_category_name_translation.csv"),[Delimiter=",", Columns=2, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+		    #"Измененный тип" = Table.TransformColumnTypes(Источник,{{"Column1", type text}, {"Column2", type text}}),
+		    #"Повышенные заголовки" = Table.PromoteHeaders(#"Измененный тип", [PromoteAllScalars=true]),
+		    #"Измененный тип1" = Table.TransformColumnTypes(#"Повышенные заголовки",{{"product_category_name", type text}, {"product_category_name_english", type text}}),
+		    #"Замененное значение" = Table.ReplaceValue(#"Измененный тип1","_"," ",Replacer.ReplaceText,{"product_category_name"}),
+		    #"Выполнена капитализация каждого слова" = Table.TransformColumns(#"Замененное значение",{{"product_category_name", Text.Proper, type text}})
+		in
+		    #"Выполнена капитализация каждого слова"
+	lineageTag: 80de5e4e-179c-45de-b0dc-c86614a22a52
+	queryGroup: 1_Import
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

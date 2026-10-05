@@ -1,0 +1,144 @@
+table dim_customers_mart
+	lineageTag: 2c15fd3e-4fb9-42c3-ab62-61bbe938d350
+
+	/// Присваивается клиенту в рамках заказа. 
+	/// Уникальных клиентов по нему считать нельзя. Если нужен уникальный - 'Уникальный ID клиента'
+	column customer_key
+		dataType: int64
+		formatString: 0
+		lineageTag: fee1afdc-a687-47aa-8560-75c278f66c30
+		summarizeBy: none
+		sourceColumn: customer_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Сквозной ID клиента, присваивается один раз и не меняется, в отличие от кастомер_айди(кастомер_ки)
+	column 'Уникальный ID клиента'
+		dataType: string
+		lineageTag: 6f9a2e11-05de-40ae-aeb2-0938a93a8f06
+		summarizeBy: none
+		sourceColumn: Уникальный ID клиента
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Почтовый индекс клиента'
+		dataType: int64
+		formatString: 0
+		lineageTag: 1ddefd19-c06b-490a-94d1-aeb7bb5445e0
+		summarizeBy: none
+		sourceColumn: Почтовый индекс клиента
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column 'Город клиента'
+		dataType: string
+		lineageTag: 50e7ef5b-df6f-49b9-9381-e96ca2a674a5
+		summarizeBy: none
+		sourceColumn: Город клиента
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Регион клиента'
+		dataType: string
+		lineageTag: e4b06cb6-ae13-4bbe-85eb-3a6e5f1dc9f8
+		dataCategory: Place
+		summarizeBy: none
+		sourceColumn: Регион клиента
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Первый заказ' =
+			
+			VAR CurrentUniqueID = dim_customers_mart[Уникальный ID клиента]
+			RETURN
+			CALCULATE(
+			    MIN(fact_order_items[Дата создания заказа]),
+			    FILTER(
+			        ALL(fact_order_items),
+			        RELATED(dim_customers_mart[Уникальный ID клиента]) = CurrentUniqueID
+			    )
+			)
+		formatString: Long Date
+		lineageTag: f0a4722e-9385-4cdf-baba-30adf3400720
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Последний заказ' =
+			
+			VAR CurrentUniqueID = dim_customers_mart[Уникальный ID клиента]
+			RETURN
+			CALCULATE(
+			    MAX(fact_order_items[Дата создания заказа]),
+			    FILTER(
+			        ALL(fact_order_items),
+			        RELATED(dim_customers_mart[Уникальный ID клиента]) = CurrentUniqueID
+			    )
+			)
+		formatString: Long Date
+		lineageTag: 944fb736-164b-4c71-96aa-e7d831773343
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Время жизни клиента' = ```
+			
+			DATEDIFF(
+			    dim_customers_mart[Первый заказ], 
+			    dim_customers_mart[Последний заказ], 
+			    DAY
+			)
+			```
+		formatString: 0
+		lineageTag: 31d2f73f-3fa7-4b89-b20f-32a4d0c0231c
+		summarizeBy: sum
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Регион для Карты' = dim_customers_mart[Регион клиента] & ", Brazil"
+		lineageTag: 1996e1aa-915f-44fd-bb21-3856d56a5cd8
+		dataCategory: Place
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customers_mart = m
+		mode: import
+		queryGroup: 2_Dimentions
+		source =
+				let
+				    Источник = #"gold dim_customers_mart",
+				    #"Переименованные столбцы" = Table.RenameColumns(Источник,{{"customer_city", "Город клиента"}, {"customer_state", "Регион клиента"}, {"customer_unique_id", "Уникальный ID клиента"}, {"customer_zip_code_prefix", "Почтовый индекс клиента"}})
+				in
+				    #"Переименованные столбцы"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

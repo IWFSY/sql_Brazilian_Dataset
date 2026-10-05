@@ -1,0 +1,617 @@
+table _measures
+	lineageTag: e395089b-70de-4411-8fed-8e5d8656ed10
+
+	measure 'Заказов доставлено' = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT(fact_order_items[ID заказа]),
+			    fact_order_items[order_status_key] = 1, 
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата вручения заказа]))
+			```
+		formatString: 0
+		displayFolder: 2. Заказы
+		lineageTag: aec790a7-1822-4e43-8607-d956125283a3
+
+	measure 'Заказов оформлено' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(fact_order_items[ID заказа]),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+		formatString: #,0
+		displayFolder: 2. Заказы
+		lineageTag: f9c0ba23-9359-4593-8f50-c5db6505db20
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Затраты на доставку' =
+			
+			CALCULATE(
+			    SUM(fact_order_items[Стоимость доставки]),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Планируемая дата доставки]))
+		displayFolder: 3. Логистика
+		lineageTag: fb0a49e1-cdd6-4526-8ad8-944609098c70
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Выручка за заказы, которые были подтверждены и оплачены. Скрыл потому что в контексте текущего датасета не имеет смысла, но тем не менее, имеет смысл в контексте бизнеса в целом
+	measure 'Выручка по проведенным платежам' =
+			
+			CALCULATE(
+			    SUM(fact_order_payments[Полная сумма заказа]),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_payments[Дата подтверждения заказа])
+			)
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: 3cfa1813-67cc-4641-aa7f-73c3708d2a10
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Средние дни доставки курьером' =
+			
+			CALCULATE(
+			    AVERAGEX(
+			        FILTER(fact_order_items, NOT(ISBLANK(fact_order_items[Дата вручения заказа]))),
+			        DATEDIFF(fact_order_items[Дата передачи в службу доставки], fact_order_items[Дата вручения заказа], DAY)),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата вручения заказа]))
+		displayFolder: 3. Логистика
+		lineageTag: 09843a10-3b28-4bfa-8056-b6171e58a5db
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Средние дни сборки продавцом' = ```
+			
+			AVERAGEX(
+			    FILTER(
+			        fact_order_items, 
+			        NOT(ISBLANK(fact_order_items[Дата передачи в службу доставки])) && 
+			        NOT(ISBLANK(fact_order_items[Дата создания заказа]))),
+			    DATEDIFF(fact_order_items[Дата создания заказа], fact_order_items[Дата передачи в службу доставки], DAY))
+			```
+		displayFolder: 3. Логистика
+		lineageTag: 7d10e140-2318-4143-a55f-3abfe4b54eca
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Поскольку в текущем датасете все заказы считаются проведенными, то достаточно только общей выручки по всем заказам. Выручка по проведенным скрыта.
+	measure 'Выручка по заказам' =
+			
+			CALCULATE(
+			    SUM(fact_order_payments[Полная сумма заказа]),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_payments[Дата создания заказа]))
+		formatString: R$ #,0
+		displayFolder: 1. Коммерция
+		lineageTag: 9db33070-de6c-49b2-b90a-cc291d0d691f
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Доля логистики в выручке' = DIVIDE(SUM(fact_order_items[Стоимость доставки]), SUM(fact_order_items[Стоимость товара]))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 3. Логистика
+		lineageTag: afdfb3f6-3baf-4b92-bd70-6008aad14a31
+
+	measure 'Количество продавцов' = DISTINCTCOUNT(fact_order_items[seller_key])
+		formatString: 0
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: ffc16a33-03cf-4fd7-9439-64593a0b8262
+
+	measure 'Продано уникальных товаров' = DISTINCTCOUNT(fact_order_items[product_key])
+		formatString: 0
+		displayFolder: 2. Заказы
+		lineageTag: e9e18b17-b6e4-41f1-b7bd-4933ba79579b
+
+	measure 'Продано товаров' = COUNT(fact_order_items[Порядковый номер товара в заказе])
+		formatString: 0
+		displayFolder: 2. Заказы
+		lineageTag: 25985147-53cb-4742-8700-8a7c55572e24
+
+	measure 'Количество клиентов (по заказам)' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(fact_order_items[customer_key]),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+		formatString: 0
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: b93627ac-326f-4300-9cef-8238973fc44a
+
+	measure 'Количество уникальных клиентов' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_customers_mart[Уникальный ID клиента]),
+			    CROSSFILTER(fact_order_items[customer_key], dim_customers_mart[customer_key], BOTH),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+		formatString: #,0
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: f6b59e28-372a-4933-8767-cb4810a10f12
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Количество бесплатных доставок' =
+			
+			CALCULATE(
+			    COUNT(fact_order_items[Порядковый номер товара в заказе]), fact_order_items[Бесплатная доставка] = "Да",
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+		formatString: 0
+		displayFolder: 3. Логистика
+		lineageTag: 5fae40ea-037b-474f-ac44-973c9ae500b9
+
+	measure 'Доля бесплатных заказов' = ```
+			
+			DIVIDE(
+			    [Количество бесплатных доставок], 
+			    [Заказов оформлено])
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 3. Логистика
+		lineageTag: 5dd0e993-80f4-400b-afa3-f1feb13abe78
+
+	measure 'Процент отмененных заказов' =
+			
+			DIVIDE([Заказов отменено], [Заказов оформлено]) + 0
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 2. Заказы
+		lineageTag: 1f980729-2094-48a7-b55b-d7815ecdc504
+
+	measure 'Заказов отменено' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(fact_order_items[ID заказа]),
+			    fact_order_items[order_status_key] = 2,
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+		formatString: 0
+		displayFolder: 2. Заказы
+		lineageTag: b1b09a40-75b9-469b-8c1f-8544221c260b
+
+	measure 'Среднее число заказов на клиента' = ```
+			
+			VAR UniqueCustomers = 
+			    CALCULATE(
+			        DISTINCTCOUNT(dim_customers_mart[Уникальный ID клиента]),
+			        CROSSFILTER(fact_order_items[customer_key], dim_customers_mart[customer_key], BOTH),
+			        USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+			RETURN
+			DIVIDE([Заказов оформлено], UniqueCustomers)
+			```
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: beaf0268-ce14-4949-90c7-edc77e56bde6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Выручка на клиента (ARPU)' = ```
+			
+			VAR UniqueCustomers = 
+			    CALCULATE(
+			        DISTINCTCOUNT(dim_customers_mart[Уникальный ID клиента]),
+			        CROSSFILTER(fact_order_items[customer_key], dim_customers_mart[customer_key], BOTH),
+			        USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата создания заказа]))
+			RETURN
+			DIVIDE([Выручка по заказам], UniqueCustomers)
+			```
+		formatString: R$ #,0
+		displayFolder: 1. Коммерция
+		lineageTag: 97bced84-61f7-414b-8a7b-8ca70bc49509
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Средний чек заказа (AOV)' = ```
+			DIVIDE([Выручка по заказам], [Заказов оформлено])
+			
+			```
+		formatString: " R$ #,0"
+		displayFolder: 1. Коммерция
+		lineageTag: ad3b5b00-1dcb-430b-862a-8467bfaa6598
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Количество товаров в чеке (UPT)' = DIVIDE([Продано товаров], [Заказов оформлено])
+		displayFolder: 2. Заказы
+		lineageTag: e12378fb-45d5-43ae-bd99-c7f893203cbd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Доля просроченных доставок (SLA)' =
+			
+			CALCULATE(
+			    DIVIDE(
+			        COUNTROWS(FILTER(fact_order_items, fact_order_items[Нарушение Дедлайна] = "Да")), [Заказов доставлено]),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата вручения заказа]))
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 3. Логистика
+		lineageTag: ad7bdbd2-c92e-459e-bf67-9c1ff7956a91
+
+	measure 'Средняя стоимость доставки' = DIVIDE([Затраты на доставку], [Заказов оформлено])
+		displayFolder: 3. Логистика
+		lineageTag: a3114aa2-8d7a-486a-ab61-59ea0ab6ade0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Выручка прошлого года' = ```
+			
+			CALCULATE(
+			    [Выручка по заказам], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: c78b06fe-48ae-4123-8f7a-18cff7d87889
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Выручка' =
+			
+			VAR _Current = [Выручка по заказам]
+			VAR _Previous = [Выручка прошлого года]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: b1baf19f-3b45-4b6a-93b9-2bad39e1daad
+
+		changedProperty = IsHidden
+
+	measure 'Заказы прошлого года' = ```
+			
+			CALCULATE(
+			    [Заказов оформлено], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: 17876309-f324-45dc-8d28-93ecc8de5320
+
+		changedProperty = IsHidden
+
+	measure 'AOV прошлого года' = ```
+			
+			CALCULATE(
+			    [Средний чек заказа (AOV)], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			
+			```
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: 3dd17fba-42e6-4b46-8d9e-342b5e9dab10
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Заказы' =
+			
+			VAR _Current = [Заказов оформлено]
+			VAR _Previous = [Заказы прошлого года]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: 5badbbe1-8a3c-4c8d-8607-5ec9481ff2ec
+
+		changedProperty = IsHidden
+
+	measure 'YoY AOV' =
+			
+			VAR _Current = [Средний чек заказа (AOV)]
+			VAR _Previous = [AOV прошлого года]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: 976617bc-6bd2-41b1-907c-f58e4f82774f
+
+		changedProperty = IsHidden
+
+	measure 'Клиенты прошлого года' = ```
+			
+			CALCULATE(
+			    [Количество уникальных клиентов], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			
+			```
+		formatString: 0
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: 2356cd68-9287-4e11-8e71-dade0612bbbf
+
+		changedProperty = IsHidden
+
+	measure 'YoY клиенты' = ```
+			
+			VAR _Current = [Количество уникальных клиентов]
+			VAR _Previous = [Клиенты прошлого года]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 1. Коммерция
+		lineageTag: ef40d47d-e39c-42ef-88a1-a70c8cb9eb7e
+
+		changedProperty = IsHidden
+
+	measure 'Средние планируемые дни курьером' =
+			
+			CALCULATE(
+			    AVERAGEX(
+			        FILTER(fact_order_items, NOT(ISBLANK(fact_order_items[Дата вручения заказа]))),
+			        DATEDIFF(fact_order_items[Дата передачи в службу доставки], fact_order_items[Планируемая дата доставки], DAY)),
+			    USERELATIONSHIP(dim_date[Дата], fact_order_items[Дата вручения заказа]))
+		displayFolder: 3. Логистика
+		lineageTag: 9a28f54f-cb2d-49c0-b8c7-a171fbb51c5f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Доля просрочек прошлого года' = ```
+			
+			CALCULATE(
+			    [Доля просроченных доставок (SLA)], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: 5597c483-a4f2-4e0f-9d2d-abd17fcf67c5
+
+		changedProperty = IsHidden
+
+	measure 'YoY SLA' =
+			
+			VAR _Current = [Доля просроченных доставок (SLA)]
+			VAR _Previous = [Доля просрочек прошлого года]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: 2febffd6-d29e-49a4-b76e-2054b707b9b9
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год доля логистики в выручке' = ```
+			
+			CALCULATE(
+			    [Доля логистики в выручке], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: 07854398-8f12-4c56-8ff3-652418c0e8e9
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY доля логистики в выручке' =
+			
+			VAR _Current = [Доля логистики в выручке]
+			VAR _Previous = [Прошлый год доля логистики в выручке]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: 18212581-51d6-4c10-9731-956c07467cc3
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год средние дни доставки курьером' = ```
+			
+			CALCULATE(
+			    [Средние дни доставки курьером], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: 5b276e92-a6f8-47ba-b8a1-4e9d7ec445d2
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY средние дни доставки курьером' =
+			
+			VAR _Current = [Средние дни доставки курьером]
+			VAR _Previous = [Прошлый год средние дни доставки курьером]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: 22dc90a5-d2a5-4d25-a7b2-4a19eebc4a5c
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год затраты на доставку' = ```
+			
+			CALCULATE(
+			    [Затраты на доставку], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: ca817701-5574-461c-9b19-ab81ea89379f
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Затраты на доставку' =
+			
+			VAR _Current = [Затраты на доставку]
+			VAR _Previous = [Прошлый год затраты на доставку]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 3. Логистика
+		lineageTag: fae43d21-4660-4ac9-9c6e-9ade4b37ab8b
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год выручка на клиента' = ```
+			
+			CALCULATE(
+			    [Выручка на клиента (ARPU)], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: a999cd63-e85b-47b1-ae08-649876b6244b
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Выручка на клиента' =
+			
+			VAR _Current = [Выручка на клиента (ARPU)]
+			VAR _Previous = [Прошлый год выручка на клиента]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: 7172db59-b41a-48a4-8ab3-a98246a728f6
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год количество товаров в чеке' = ```
+			
+			CALCULATE(
+			    [Количество товаров в чеке (UPT)], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: 8800a326-2be3-4f66-b2e8-4f593d2c5e14
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Количество товаров в чеке' =
+			
+			VAR _Current = [Количество товаров в чеке (UPT)]
+			VAR _Previous = [Прошлый год количество товаров в чеке]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: f40576be-a0f0-40ff-9b2d-97379940c112
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год среднее число заказов на клиента' = ```
+			
+			CALCULATE(
+			    [Среднее число заказов на клиента], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: 14a5c89d-3e04-4292-bb6d-58ba7edb71a5
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Среднее число заказов на клиента' =
+			
+			VAR _Current = [Среднее число заказов на клиента]
+			VAR _Previous = [Прошлый год среднее число заказов на клиента]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: ec6b6734-76ea-474b-b390-5b038225ed3e
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год количество продавцов' = ```
+			
+			CALCULATE(
+			    [Количество продавцов], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		formatString: 0
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: b15430af-bf45-45b7-8f57-da61941a7bc3
+
+		changedProperty = IsHidden
+
+	measure 'YoY Количество продавцов' =
+			
+			VAR _Current = [Количество продавцов]
+			VAR _Previous = [Прошлый год количество продавцов]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: 8a933c9c-1c5b-4537-9956-526bfd0b9486
+
+		changedProperty = IsHidden
+
+	measure 'Прошлый год процент отмененных заказов' = ```
+			
+			CALCULATE(
+			    [Процент отмененных заказов], 
+			    SAMEPERIODLASTYEAR(dim_date[Дата])
+			)
+			```
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: d812e580-5536-43d8-9afd-e47ca9f33783
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Процент отмененных заказов' =
+			
+			VAR _Current = [Процент отмененных заказов]
+			VAR _Previous = [Прошлый год процент отмененных заказов]
+			RETURN
+			    DIVIDE(_Current - _Previous, _Previous)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: 4. Клиенты и Продавцы
+		lineageTag: a094525c-846b-4582-89c2-c0cb63877d14
+
+		changedProperty = IsHidden
+
+	partition _measures = m
+		mode: import
+		source =
+				let
+				    Источник = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Столбец1 = _t]),
+				    #"Измененный тип" = Table.TransformColumnTypes(Источник,{{"Столбец1", type text}}),
+				    #"Удаленные столбцы" = Table.RemoveColumns(#"Измененный тип",{"Столбец1"})
+				in
+				    #"Удаленные столбцы"
+
+	annotation PBI_ResultType = Table
+

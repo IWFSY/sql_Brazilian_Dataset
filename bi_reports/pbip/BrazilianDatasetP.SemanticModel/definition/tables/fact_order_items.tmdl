@@ -1,0 +1,215 @@
+table fact_order_items
+	lineageTag: 1a8bcd4c-3316-415f-b216-f92365899a00
+
+	column customer_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6efae838-8145-43ef-bf6b-cacfde035aca
+		summarizeBy: none
+		sourceColumn: customer_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f14c828a-35de-4f01-802d-08da49259aef
+		summarizeBy: none
+		sourceColumn: product_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ab94f41e-61b5-4636-a3d4-80e83a3d8ff9
+		summarizeBy: none
+		sourceColumn: seller_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_status_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7ef6bacb-8885-413c-b2c3-e6b3733e3e39
+		summarizeBy: none
+		sourceColumn: order_status_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID заказа'
+		dataType: string
+		lineageTag: c4d0e75e-255f-4cbe-8465-d3204e6ea0b7
+		summarizeBy: none
+		sourceColumn: ID заказа
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Порядковый номер товара в заказе'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6eb940a4-dd82-44eb-9aa9-a6bb0785e8d9
+		summarizeBy: none
+		sourceColumn: Порядковый номер товара в заказе
+
+		annotation SummarizationSetBy = User
+
+	column 'Стоимость товара'
+		dataType: double
+		lineageTag: 921df360-da5b-49ad-a401-4a49fb88d5c4
+		summarizeBy: sum
+		sourceColumn: Стоимость товара
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Стоимость доставки'
+		dataType: double
+		lineageTag: e49f5148-f29f-4aa5-a7f8-6fa63809d4d4
+		summarizeBy: sum
+		sourceColumn: Стоимость доставки
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Крайний срок отгрузки'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b5b3f5ca-2a2b-4b87-9d9a-95156ec94a16
+		summarizeBy: none
+		sourceColumn: Крайний срок отгрузки
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Дата создания заказа'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5c3f1fb9-8e91-4644-b618-58d37bfa54b2
+		summarizeBy: none
+		sourceColumn: Дата создания заказа
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Дата подтверждения заказа'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: de14a32f-c98e-4ac1-85de-7ee905ccdbdb
+		summarizeBy: none
+		sourceColumn: Дата подтверждения заказа
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Дата передачи в службу доставки'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c347402b-1c17-4d63-b5d0-659266ed66d0
+		summarizeBy: none
+		sourceColumn: Дата передачи в службу доставки
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Дата вручения заказа'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4cab043a-eac9-47c4-a379-d9a23e042d2b
+		summarizeBy: none
+		sourceColumn: Дата вручения заказа
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Планируемая дата доставки'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: be1436fb-9659-4820-99f9-c7513ed3cb82
+		summarizeBy: none
+		sourceColumn: Планируемая дата доставки
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Виновник задержки' =
+			
+			VAR IsDeliveredLate = fact_order_items[Дата вручения заказа] > fact_order_items[Планируемая дата доставки]
+			VAR IsSellerLate = fact_order_items[Дата передачи в службу доставки] > fact_order_items[Крайний срок отгрузки]
+			RETURN
+			IF(
+			    NOT(ISBLANK(fact_order_items[Дата вручения заказа])),
+			    SWITCH(
+			        TRUE(),
+			        IsDeliveredLate && IsSellerLate, "Сбой продавца",
+			        IsDeliveredLate && NOT(IsSellerLate), "Сбой логистики",
+			        "В срок"),
+			    "В пути / Нет данных")
+		displayFolder: _Флаги для среза
+		lineageTag: 66667d1d-0547-48ed-aa08-d5061b7bf3c9
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Бесплатная доставка' = ```
+			IF(fact_order_items[Стоимость доставки] = 0, "Да", "Нет")
+			
+			```
+		displayFolder: _Флаги для среза
+		lineageTag: da4202d1-f5b9-4c1b-8f25-bfc0b0c0358a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Нарушение Дедлайна' = IF(fact_order_items[Дата вручения заказа] > fact_order_items[Планируемая дата доставки], "Да", "Нет")
+		displayFolder: _Флаги для среза
+		lineageTag: 7132b3a2-82fd-4f49-afcf-22815e19508f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_order_items = m
+		mode: import
+		queryGroup: 3_Facts
+		source =
+				let
+				    Источник = #"gold fact_mart",
+				    #"Объединенные запросы" = Table.NestedJoin(Источник, {"order_status"}, dim_order_status, {"Статус заказа"}, "dim_order_status", JoinKind.LeftOuter),
+				    #"Развернутый элемент dim_order_status" = Table.ExpandTableColumn(#"Объединенные запросы", "dim_order_status", {"order_status_key"}, {"order_status_key"}),
+				    #"Переупорядоченные столбцы" = Table.ReorderColumns(#"Развернутый элемент dim_order_status",{"customer_key", "product_key", "seller_key", "order_status_key", "order_id", "order_item_id", "payment_type", "payment_sequential", "payment_installments", "price", "freight_value", "payment_value", "order_status", "shipping_limit_date", "order_purchase_date", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+				    #"Удаленные столбцы" = Table.RemoveColumns(#"Переупорядоченные столбцы",{"order_status"}),
+				    #"Объединенные запросы1" = Table.NestedJoin(#"Удаленные столбцы", {"payment_type"}, dim_payment_type, {"Тип оплаты"}, "dim_payment_type", JoinKind.LeftOuter),
+				    #"Развернутый элемент dim_payment_type" = Table.ExpandTableColumn(#"Объединенные запросы1", "dim_payment_type", {"payment_type_key"}, {"payment_type_key"}),
+				    #"Переупорядоченные столбцы1" = Table.ReorderColumns(#"Развернутый элемент dim_payment_type",{"customer_key", "product_key", "seller_key", "order_status_key", "order_id", "payment_type_key", "order_item_id", "payment_type", "payment_sequential", "payment_installments", "price", "freight_value", "payment_value", "shipping_limit_date", "order_purchase_date", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+				    #"Удаленные столбцы1" = Table.RemoveColumns(#"Переупорядоченные столбцы1",{"payment_type"}),
+				    #"Переупорядоченные столбцы2" = Table.ReorderColumns(#"Удаленные столбцы1",{"customer_key", "product_key", "seller_key", "order_status_key", "payment_type_key", "order_id", "order_item_id", "payment_sequential", "payment_installments", "price", "freight_value", "payment_value", "shipping_limit_date", "order_purchase_date", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"}),
+				    #"Удаленные столбцы2" = Table.RemoveColumns(#"Переупорядоченные столбцы2",{"payment_type_key", "payment_sequential", "payment_installments", "payment_value"}),
+				    #"Удаленные дубликаты" = Table.Distinct(#"Удаленные столбцы2"),
+				    #"Переименованные столбцы" = Table.RenameColumns(#"Удаленные дубликаты",{{"order_purchase_date", "Дата создания заказа"}, {"freight_value", "Стоимость доставки"}, {"order_approved_at", "Дата подтверждения заказа"}, {"order_delivered_carrier_date", "Дата передачи в службу доставки"}, {"order_delivered_customer_date", "Дата вручения заказа"}, {"order_estimated_delivery_date", "Планируемая дата доставки"}, {"order_item_id", "Порядковый номер товара в заказе"}, {"order_id", "ID заказа"}, {"price", "Стоимость товара"}, {"shipping_limit_date", "Крайний срок отгрузки"}})
+				in
+				    #"Переименованные столбцы"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

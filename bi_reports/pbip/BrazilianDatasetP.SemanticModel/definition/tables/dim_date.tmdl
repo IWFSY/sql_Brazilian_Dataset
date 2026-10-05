@@ -1,0 +1,95 @@
+table dim_date
+	lineageTag: 19044507-c1d3-4989-94f8-1a125ae97682
+
+	column Дата
+		formatString: General Date
+		lineageTag: d80d68ae-3f9c-461f-ac31-ab82adb5960f
+		summarizeBy: none
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Номер месяца' = MONTH(dim_date[Дата])
+		isHidden
+		formatString: 0
+		lineageTag: 60d179ab-8a39-4a87-97ed-5795871d71e6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column Год = YEAR(dim_date[Дата])
+		formatString: 0
+		lineageTag: 958dbca8-fd1b-4938-9c1c-bf879a8ffb8c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column Месяц = FORMAT(dim_date[Дата], "MMMM", "ru-RU")
+		lineageTag: 136c9df4-7ad0-489b-b029-00ce3eac4c14
+		summarizeBy: none
+		sortByColumn: 'Номер месяца'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Квартал = "Кв. " & QUARTER(dim_date[Дата])
+		lineageTag: 91ee7345-46f0-432f-9aed-4f275b9c72f9
+		summarizeBy: none
+		sortByColumn: 'Номер квартала'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Номер квартала' = QUARTER(dim_date[Дата])
+		isHidden
+		formatString: 0
+		lineageTag: 77e3b38a-2fa0-4dd8-ab76-f912ab1759c4
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Номер недели' = WEEKNUM(dim_date[Дата],2)
+		formatString: 0
+		lineageTag: 2ec1b7c5-83bf-435d-99cf-3d1b468ed111
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'День недели' = FORMAT(dim_date[Дата], "dddd")
+		lineageTag: 32aefd9c-f676-42d9-8077-983adc888405
+		summarizeBy: none
+		sortByColumn: 'Номер дня недели'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Номер дня недели' = WEEKDAY(dim_date[Дата], 2)
+		isHidden
+		formatString: 0
+		lineageTag: de2dd3a6-d31a-4c8f-94f7-5ca40cca01b3
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Год Месяц' = FORMAT(dim_date[Дата], "YYYY-MM")
+		lineageTag: af570d63-ec89-4251-9a16-ff82a9c1291e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Тип дня' = ```
+			
+			IF(
+			    WEEKDAY(dim_date[Дата], 2) IN {6, 7},
+			    "Выходной", 
+			    "Рабочий"
+			)
+			```
+		lineageTag: ac9541e9-c401-4d07-b508-fff37678600e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = calculated
+		mode: import
+		source = CALENDARAUTO()
+
+	annotation PBI_Id = bea7b871efe5447fb179452ba39f2676
+

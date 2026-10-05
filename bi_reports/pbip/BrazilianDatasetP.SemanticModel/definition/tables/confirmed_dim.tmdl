@@ -1,0 +1,32 @@
+table confirmed_dim
+	isHidden
+	lineageTag: af607fd8-4c49-4afc-9533-314dfe000835
+
+	column 'ID заказа'
+		dataType: string
+		isHidden
+		lineageTag: a863512f-d379-4e4d-ab2b-e65d58e23fc6
+		summarizeBy: none
+		sourceColumn: ID заказа
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition confirmed_dim = m
+		mode: import
+		queryGroup: 2_Dimentions
+		source =
+				let
+				    Источник = fact_order_items,
+				    #"Удаленные столбцы" = Table.RemoveColumns(Источник,{"customer_key", "product_key", "seller_key", "order_status_key", "Порядковый номер товара в заказе", "Стоимость товара", "Стоимость доставки", "Крайний срок отгрузки", "Дата создания заказа", "Дата подтверждения заказа", "Дата передачи в службу доставки", "Дата вручения заказа", "Планируемая дата доставки"}),
+				    #"Удаленные дубликаты" = Table.Distinct(#"Удаленные столбцы")
+				in
+				    #"Удаленные дубликаты"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+
